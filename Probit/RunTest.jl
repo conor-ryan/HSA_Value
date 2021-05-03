@@ -37,7 +37,7 @@ println(minimum(pars.s_ij))
 ll = log_likelihood(data,p0)
 println(ll)
 
-estimation_num = 20
+estimation_num = 10
 beta_est = Matrix{Float64}(undef,length(pars.β),estimation_num)
 sig_est = Array{Float64,3}(undef,size(pars.Σ,1),size(pars.Σ,2),estimation_num)
 
@@ -48,11 +48,11 @@ for i in 1:estimation_num
                     [:V1; :V2],
                     4,
                     100,
-                    100000,
+                    1000,
                     1000)
     p_init = vcat((rand(2).-0.5).*4,rand(2)*3,rand(3)*2 .-1)
-    res = particle_swarm(25,data,p_init,tol_imp=1e-8,tol_dist=1e-2,verbose=true)
-    val, p_est = res
+    res = particle_swarm(25,data,p_init,tol_imp=1e-8,tol_dist=1e-2,verbose=false)
+    ret, val, p_est = res
     par_est = parDict(p_est,data)
     beta_est[:,i] = par_est.β[:]
     sig_est[:,:,i] = par_est.Σ[:,:]

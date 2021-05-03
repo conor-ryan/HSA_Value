@@ -22,9 +22,9 @@ function estimate_ng(d::ChoiceData, p0::Vector{Float64};method=:LN_NELDERMEAD)
     function ll(x, grad)
         count +=1
         x_displ = x[:]
-        println("Iteration $count at $x_displ")
+        # println("Iteration $count at $x_displ")
         obj = ll(x)
-        println("Objective equals $obj on iteration $count")
+        # println("Objective equals $obj on iteration $count")
 
         return obj
     end
@@ -67,7 +67,7 @@ function particle_swarm(N,d::ChoiceData,p0::Vector{Float64};
 
 
     for i in 1:N
-        particles[:,i] = p0[:] + randn(length(p0)).*variances
+        particles[:,i] = p0[:] + randn(length(p0)).*init_var
         velocities[:,i] = zeros(length(p0))
         p_best_pos[:,i] = particles[:,i]
         p_best_eval[i] = func(particles[:,i])
@@ -124,36 +124,10 @@ function particle_swarm(N,d::ChoiceData,p0::Vector{Float64};
             end
         end
         if (conv_cnt>5)
-            println("Converged!")
-            println("Test Gradient")
-            grad = Vector{Float64}(undef,length(p0))
-            numDeriv!(grad,func,max_pos,ϵ=1e-4)
-            grad_size = sqrt(sum(grad.^2))
-            println(grad_size)
-            println(grad)
-            println(gradient_test)
-            new_max_pos = max_pos .+ 1e-6.*sign.(grad)
-            new_max_val = func(new_max_pos)
-            if (grad_size<1e-5) | (gradient_test>0)
-                return max_eval,max_pos
-            else
-                max_pos[:] = new_max_pos[:]
-                max_eval[1] = new_max_val
-                println("Reset along gradient")
-                gradient_test = 1
-                conv_cnt = 0
+            println("Swarm Converged! Local search on best point")
+            res = estimate_ng(d,max_pos)
+            return res
 
-                for i in 1:N
-                    particles[:,i] = max_pos .+ (rand(1)[1]*1e-1).*grad + randn(length(p0)).*(variances/100)
-                    velocities[:,i] = zeros(length(p0))
-                    p_best_pos[:,i] = particles[:,i]
-                    p_best_eval[i] = func(particles[:,i])
-                    if p_best_eval[i]>max_eval[1]
-                        max_eval[1] = p_best_eval[i]
-                        max_pos[:] = particles[:,i]
-                    end
-                end
-            end
         end
         #println(particles)
     end
