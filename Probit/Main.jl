@@ -32,7 +32,7 @@ res = particle_swarm(50,data,p0,tol_imp=1e-5,tol_dist=1e-2,verbose=true,variance
 
 
 
-val, p_est = res
-res = particle_swarm(50,data,p_est,tol_imp=1e-5,tol_dist=1e-2,verbose=true,variances=variances)
+flag, val, p_est = res
+
 
 par_est = parDict(p_est,data)
