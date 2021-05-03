@@ -1,10 +1,10 @@
-googleDrivePath = "G:\My Drive"
+googleDrivePath = "G:/My Drive"
 include("Load.jl")
 include("ProbitTypes.jl")
 include("Halton.jl")
 include("utility.jl")
 include("Constructors.jl")
-include("ProbitParams.jl")
+include("EvalDemand.jl")
 include("log_likelihood.jl")
 include("Estimate.jl")
 data = ChoiceData(df,

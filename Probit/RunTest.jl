@@ -1,6 +1,6 @@
 include("ProbitTypes.jl")
 include("SimulateData.jl")
-include("ProbitParams.jl")
+include("EvalDemand.jl")
 include("log_likelihood.jl")
 include("Constructors.jl")
 include("Estimate.jl")
