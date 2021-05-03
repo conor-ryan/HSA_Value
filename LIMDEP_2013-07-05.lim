@@ -1,0 +1,774 @@
+set matsize 2000
+
+clear
+set matsize 2000
+
+**** create JHE Runs from 2007-2008
+
+clear
+set matsize 200
+
+LOAD;file="C:\Shuttle\UM\Research\DEFCON3\Employers\RAY\CHOICE11.LPJ"$
+
+namelist ; x9 =scmedpr2,
+    HMO,HMO2,HRAG,HRAS,HSA,POS,PPO,
+    prem_es,prem_ef,prem_ec,
+    HMO_fem,HMO2_fem,HRAG_fem,HRAS_fem,HSA_fem,POS_fem,PPO_fem,
+    HMO_age,HMO2_age,HRAG_age,HRAS_age,HSA_age,POS_age,PPO_age,
+    HMO_chr,HMO2_chr,HRAG_chr,HRAS_chr,HSA_chr,POS_chr,PPO_chr,
+    HMO_fam,HMO2_fam,HRAG_fam,HRAS_fam,HSA_fam,POS_fam,PPO_fam,
+    HMO_inc,HMO2_inc,HRAG_inc,HRAS_inc,HSA_inc,POS_inc,PPO_inc $
+dstats;rhs=x9 $
+
+DISC;Lhs=yvar,CHOICES,PLANID; Rhs=x9
+    ;Choices = 1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO $
+
+create ; prem_fam=scmedpr2*family $
+create ; ante_coi=1-coins $
+
+create ; kid_hmo=dependen*hmo $
+create ; kid_HMo2=dependen*hmo2 $
+create ; kid_hrag=dependen*hrag $
+create ; kid_hras=dependen*hras $
+create ; kid_hsa=dependen*hsa $
+create ; kid_pos=dependen*pos $
+create ; kid_ppo=dependen*ppo $
+
+create ; prem_cho=scmedpr2*ls_chron $
+
+
+namelist ; x9 =scmedpr2,
+    HMO,HMO2,HRAG,HRAS,HSA,POS,PPO,
+    prem_ee,prem_es,prem_ec,
+    HMO_fem,HMO2_fem,HRAG_fem,HRAS_fem,HSA_fem,POS_fem,PPO_fem,
+    HMO_age,HMO2_age,HRAG_age,HRAS_age,HSA_age,POS_age,PPO_age,
+    HMO_chr,HMO2_chr,HRAG_chr,HRAS_chr,HSA_chr,POS_chr,PPO_chr,
+    kid_hmo,kid_hmo2,kid_hrag,kid_hras,kid_hsa,kid_pos,kid_ppo,
+    HMO_inc,HMO2_inc,HRAG_inc,HRAS_inc,HSA_inc,POS_inc,PPO_inc $
+
+
+DISC;Lhs=yvar,CHOICES,PLANID; Rhs=x9
+    ;Choices = 1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO $
+
+**** create Multinominal Probit IHEA Runs from 2013
+
+clear
+set matsize 200
+
+LOAD;file="C:\Shuttle\UM\Research\DEFCON3\Employers\RAY\CHOICE14.LPJ"$
+
+LOAD;file="C:\Shuttle\UM\Research\DEFCON3\Employers\RAY\Rstrct10p_choice10.lpj"$
+
+NLOGIT;Lhs=YVAR,CHOICES,PLANID; 
+Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO;Rhs=scmedpr2,COINS,SCLB,SCUB;
+Rh2=ONE,CHRONIC,SINC; ; Describe ; Effects: scmedpr2 (*), coins (*); MNP$
+
+
+namelist ; x4 =scmedpr2,COINS,SCLB,SCUB,
+    HMO,HMO2,HRAG,HRAS,HSA,POS,PPO,
+    HMO_chr,HMO2_chr,HRAG_chr,HRAS_chr,HSA_chr,POS_chr,PPO_chr,
+    HMO_inc,HMO2_inc,HRAG_inc,HRAS_inc,HSA_inc,POS_inc,PPO_inc $
+
+NLOGIT;Lhs=YVAR,CHOICES,PLANID; 
+Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO;Rhs=x4;Rh2=ONE,CHRONIC,SINC;MNP$
+
+NLOGIT;Lhs=YVAR;Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO;Rhs
+    =SCMEDPR2;Rh2=ONE;MNP$
+
+NLOGIT;Lhs=YVARtwo,ptwocnt,newpid; 
+Choices=1TRA,2HRA,3HSA,4HMO;Rhs=scmedpr2;Rh2=ONE,CHRONIC,SINC;MNP$
+
+
+
+LOAD;file="C:\Shuttle\UM\Research\DEFCON3\Employers\RAY\CHOICE12.LPJ"$
+
+
+
+2007-06-02 - Successful Conditional Logit for Raytheon
+
+Basic
+
+DISC;Lhs=yvar,CHOICES,PLANID; Rhs=NEWPREM, CLB,CUB,coins, HMO,HMO2,HRAG,HRAS,HSA,POS,PPO 
+    ;Choices = 1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO 
+    ; Describe ; Effects: NEWPREM (*) $
+
+Advanced
+
+create ; prem_fam=scmedpr2*family $
+create ; ante_coi=1-coins $
+
+create ; kid_hmo=dependen*hmo $
+create ; kid_HMo2=dependen*hmo2 $
+create ; kid_hrag=dependen*hrag $
+create ; kid_hras=dependen*hras $
+create ; kid_hsa=dependen*hsa $
+create ; kid_pos=dependen*pos $
+create ; kid_ppo=dependen*ppo $
+
+create ; prem_cho=scmedpr2*ls_chron $
+
+
+LOAD;file="C:\Shuttle\UM\Research\DEFCON3\Employers\RAY\RSTRCT_CHOICE10.LPJ"$
+LOAD;file="C:\Shuttle\UM\Research\DEFCON3\Employers\RAY\RSTRCT25P_CHOICE10.LPJ"$
+LOAD;file="C:\Shuttle\UM\Research\DEFCON3\Employers\RAY\RSTRCT10P_CHOICE10.LPJ"$
+
+
+LOAD;file="C:\Shuttle\UM\Research\DEFCON3\Employers\RAY\CHOICE10.LPJ"$
+LOAD;file="C:\Shuttle\UM\Research\DEFCON3\Employers\RAY\CHOICE10j.LPJ"$
+LOAD;file="C:\Shuttle\UM\Research\DEFCON3\Employers\RAY\CHOICE10k.LPJ"$
+LOAD;file="C:\Shuttle\UM\Research\DEFCON3\Employers\RAY\CHOICE10l.LPJ"$
+
+   
+LOAD;file="C:\Shuttle\UM\Research\DEFCON3\Employers\RAY\CHOICE10k.LPJ"$
+
+create ; prem_fam=scmedpr2*family $
+create ; cd_incsc=cdhp_inc*0.1 $
+create ; nd_incsc=ndhp_inc*0.01 $
+create ; prem_ee =scmedpr2*ee $
+create ; prem_es =scmedpr2*es $
+create ; prem_ec =scmedpr2*ec $
+create ; prem_ef =scmedpr2*ef $
+create ; ndp_fem =ndhpnest*female $
+create ; cdp_fem =cdhpnest*female $
+
+
+
+
+
+DSTATS ; RHS = ADJPREM,PREM_FAM,SCMEDPR2 $
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + lower*sclb + upper*scub + coinsur*coins + family_prem*prem_fam +
+                                chr_hmo*HMO_CHR + chr_ppo*PPO_CHR + chr_pos*POS_CHR + chr_hsa*hsa_chr +
+                                chr_hras*hras_chr + chr_hrag*hrag_chr + chr_hmo2*hmo2_chr /
+         U(NDHP,CDHP)=CD*CDHPnest+ CDPAGE*CDHP_AGE + cdpfam*cdhp_fam + cdpinc*cdhp_inc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001 $
+
+
+* stripped down 5-7-2010
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + family_prem*prem_fam +
+                                chr_hmo*HMO_CHR + chr_ppo*PPO_CHR + chr_pos*POS_CHR + chr_hsa*hsa_chr +
+                                chr_hras*hras_chr + chr_hrag*hrag_chr + chr_hmo2*hmo2_chr /
+         U(NDHP,CDHP)=CD*CDHPnest+ CDPAGE*CDHP_AGE + cdpfam*cdhp_fam + cdpinc*cd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001 $
+
+* coinsurance & upper 
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + upper*scub + coinsur*coins + family_prem*prem_fam +
+                                chr_hmo*HMO_CHR + chr_ppo*PPO_CHR + chr_pos*POS_CHR + chr_hsa*hsa_chr +
+                                chr_hras*hras_chr + chr_hrag*hrag_chr + chr_hmo2*hmo2_chr /
+         U(NDHP,CDHP)=CD*CDHPnest+ CDPAGE*CDHP_AGE + cdpfam*cdhp_fam + cdpinc*cd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001 $
+
+* coinsurance & upper - 6-7-10 - play
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + upper*scub +  family_prem*prem_fam +
+                                chr_hmo*HMO_CHR + chr_ppo*PPO_CHR + chr_pos*POS_CHR + chr_hsa*hsa_chr +
+                                chr_hras*hras_chr + chr_hrag*hrag_chr + chr_hmo2*hmo2_chr /
+         U(NDHP,CDHP)=ND*NDHPnest+ NDPAGE*NDHP_AGE + Ndpfam*Ndhp_fam + Ndpinc*Nd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001 $
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + upper*scub +  
+                                chr_hmo*HMO_CHR + chr_ppo*PPO_CHR + chr_pos*POS_CHR + chr_hsa*hsa_chr +
+                                chr_hras*hras_chr + chr_hrag*hrag_chr + chr_hmo2*hmo2_chr /
+         U(NDHP,CDHP)=ND*NDHPnest+ Ndpinc*Nd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001  $
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + upper*scub +  coinsur*coins + family_prem*prem_fam +
+                                chr_hmo*HMO_CHR + chr_ppo*PPO_CHR + chr_pos*POS_CHR + chr_hsa*hsa_chr +
+                                chr_hrag*hrag_chr + chr_hmo2*hmo2_chr /
+         U(NDHP,CDHP)=CD*CDHPnest+ CDPAGE*CDHP_AGE + cdpfam*cdhp_fam + cdpinc*cd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001  $ 
+
+
+       ; Ivset: 	(NDHP) = [.739]  $
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + upper*scub +  coinsur*coins + family_prem*prem_fam +
+                                dum_hmo*HMO   + dum_hmo2*hmo2 + dum_pos*POS + dum_ppo*PPO + 
+                                dum_hras*hras + dum_hsa*hsa +
+                                chr_hmo*HMO_CHR + chr_hmo2*hmo2_chr + chr_pos*POS_CHR + chr_ppo*PPO_CHR + 
+                                chr_hras*hras_chr + chr_hsa*hsa_chr +
+                                age_hmo*HMO_age + age_hmo2*hmo2_age + age_pos*POS_age + age_ppo*PPO_age + 
+                                age_hras*hras_age + age_hsa*hsa_age /
+         U(NDHP,CDHP)=ND*NDHPnest+ Ndpfam*Ndhp_fam + Ndpinc*Nd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001  $
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + upper*scub +  coinsur*coins + family_prem*prem_fam +
+                                dum_hmo*HMO   + dum_hmo2*hmo2 + dum_pos*POS + dum_ppo*PPO + 
+                                dum_hras*hras + dum_hsa*hsa +
+                                age_hmo*HMO_age + age_hmo2*hmo2_age + age_pos*POS_age + age_ppo*PPO_age + 
+                                age_hras*hras_age + age_hsa*hsa_age +
+                                chr_hmo*HMO_CHR + chr_hmo2*hmo2_chr + chr_pos*POS_CHR + chr_ppo*PPO_CHR + 
+                                chr_hras*hras_chr + chr_hsa*hsa_chr +
+                                fem_hmo*HMO_fem + fem_hmo2*hmo2_fem + fem_pos*POS_fem + fem_ppo*PPO_fem + 
+                                fem_hras*hras_fem + fem_hsa*hsa_fem /
+         U(NDHP,CDHP)=CD*CDHPnest+ cdpfam*cdhp_fam + cdpinc*cd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001  $
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + ee_prem*prem_ee + es_prem*prem_es + ec_prem*prem_ec +
+                                dum_hmo*HMO   + dum_hmo2*hmo2 + dum_pos*POS + dum_ppo*PPO + 
+                                dum_hras*hras + dum_hsa*hsa +
+                                chr_hmo*HMO_CHR + chr_hmo2*hmo2_chr + chr_pos*POS_CHR + chr_ppo*PPO_CHR + 
+                                chr_hras*hras_chr + chr_hsa*hsa_chr /
+         U(NDHP,CDHP)=ND*NDHPnest+ NDPAGE*NDHP_AGE + Ndpfam*Ndhp_fam + ndpfem*ndp_fem + Ndpinc*Nd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001  $
+
+6-14-2010 nlogit4.0 model
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + ee_prem*prem_ee + es_prem*prem_es + ec_prem*prem_ec +
+                                dum_hmo*HMO   + dum_hmo2*hmo2 + dum_pos*POS + dum_ppo*PPO + 
+                                dum_hras*hras + dum_hrag*hrag + dum_hsa*hsa +
+                                chr_hmo*HMO_CHR + chr_hmo2*hmo2_chr + chr_pos*POS_CHR + chr_ppo*PPO_CHR + 
+                                chr_hras*hras_chr + chr_hrag*hrag_chr + chr_hsa*hsa_chr /
+         U(NDHP,CDHP)=ND*NDHPnest+ NDPAGE*NDHP_AGE + Ndpfam*Ndhp_fam + ndpfem*ndp_fem + Ndpinc*Nd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001  
+       ; RU3 $ or RU2 or RU3 $
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + ee_prem*prem_ee + es_prem*prem_es + ec_prem*prem_ec +
+                                dum_hmo*HMO   + dum_hmo2*hmo2 + dum_pos*POS + dum_ppo*PPO + 
+                                dum_hrag*hrag + dum_hsa*hsa +
+                                chr_hmo*HMO_CHR + chr_hmo2*hmo2_chr + chr_pos*POS_CHR + chr_ppo*PPO_CHR + 
+                                chr_hrag*hrag_chr + chr_hsa*hsa_chr /
+         U(NDHP,CDHP)=ND*NDHPnest+ NDPAGE*NDHP_AGE + Ndpfam*Ndhp_fam + ndpfem*ndp_fem + Ndpinc*Nd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); tlg=.0001  
+       ; RU1 $ or RU2 or RU3 $
+
+* 6-17 model
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + ee_prem*prem_ee + es_prem*prem_es + ec_prem*prem_ec +
+                                dum_hmo*HMO   + dum_hmo2*hmo2 + dum_pos*POS + dum_ppo*PPO + 
+                                dum_hrag*hrag + dum_hras*hras + dum_hsa*hsa +
+                                chr_hmo*HMO_CHR + chr_hmo2*hmo2_chr + chr_pos*POS_CHR + chr_ppo*PPO_CHR + 
+                                chr_hrag*hrag_chr + chr_hras*hras_chr  + chr_hsa*hsa_chr /
+         U(NDHP,CDHP)=ND*NDHPnest+ NDPAGE*NDHP_AGE + Ndpfam*Ndhp_fam + ndpfem*ndp_fem + Ndpinc*Nd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); tlg=.0001  
+       ; ru2 $
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + ee_prem*prem_ee + es_prem*prem_es + ec_prem*prem_ec +
+                                dum_hmo*HMO   + dum_hmo2*hmo2 + dum_pos*POS + dum_ppo*PPO + 
+                                dum_hrag*hrag + dum_hsa*hsa +
+                                chr_hmo*HMO_CHR + chr_hmo2*hmo2_chr + chr_pos*POS_CHR + chr_ppo*PPO_CHR + 
+                                chr_hrag*hrag_chr + chr_hsa*hsa_chr /
+         U(NDHP,CDHP)=ND*NDHPnest+ NDPAGE*NDHP_AGE + Ndpfam*Ndhp_fam + ndpfem*ndp_fem + Ndpinc*Nd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); tlg=.0001  
+       ; gnl $
+
+
+
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = dum_hmo*HMO   + dum_hmo2*hmo2 + dum_pos*POS + dum_ppo*PPO + 
+                                dum_hras*hras + dum_hsa*hsa 
+                                /
+         U(NDHP,CDHP)=ND*NDHPnest
+       ; Ivset: 	(NDHP) = .05 / (CDHP) = .05 $
+
+
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001  $
+       
+
+
+Nlogit ; Lhs = YVAR,choices,planid ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Model: U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 <ce1,ch2,ch3,cp7,0>+<ch4,ch5,0> * chronic + premium*scmedpr2 + 
+                 <ae1,ah2,ah3,ap7,0> * sage 
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)  
+       ; output=3 ; tlg=.0001  
+       ;RU1 or ru2 or ru3 $
+
+Nlogit ; Lhs = YVAR,choices,planid 
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Model: U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = premium*scmedpr2 
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)  
+       ; RU1 or RU2 or RU3 $
+
+                                chr_hmo*HMO_CHR + chr_ppo*PPO_CHR + chr_pos*POS_CHR + chr_hsa*hsa_chr +
+                                chr_hrag*hrag_chr + chr_hmo2*hmo2_chr /
+         U(NDHP,CDHP)=ND*NDHPnest+ NDPAGE*NDHP_AGE + Ndpfam*Ndhp_fam + Ndpinc*Nd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001  
+       $ 
+
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + upper*scub +  coinsur*coins + family_prem*prem_fam +
+                                chr_hmo*HMO_CHR + chr_ppo*PPO_CHR + chr_pos*POS_CHR + chr_hsa*hsa_chr +
+                                chr_hrag*hrag_chr + chr_hmo2*hmo2_chr 
+
+       ; RU1 or RU2 or RU3 $
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001  
+       $ 
+
+         U(NDHP,CDHP)=ND*NDHPnest+ NDPAGE*NDHP_AGE + Ndpfam*Ndhp_fam + Ndpinc*Ndhp_inc
+
+         U(NDHP,CDHP)=CD*CDHPnest+ CDPAGE*CDHP_AGE + cdpfam*cdhp_fam + cdpinc*cd_incsc
+
+* coinsurance & upper - different dummies
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + upper*scub + family_prem*prem_fam +
+                                chr_epo*epo_chr + chr_hmo*HMO_CHR + chr_ppo*PPO_CHR + chr_pos*POS_CHR + chr_hsa*hsa_chr +
+                                chr_hrag*hrag_chr +  chr_hmo2*hmo2_chr /
+         U(NDHP,CDHP)=CD*CDHPnest+ CDPAGE*CDHP_AGE + cdpfam*cdhp_fam + cdpinc*cd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001 ; start=logit $
+
+* just upper
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + upper*scub + family_prem*prem_fam +
+                                chr_hmo*HMO_CHR + chr_ppo*PPO_CHR + chr_pos*POS_CHR + chr_hsa*hsa_chr +
+                                chr_hras*hras_chr + chr_hrag*hrag_chr + chr_hmo2*hmo2_chr /
+         U(NDHP,CDHP)=CD*CDHPnest+ CDPAGE*CDHP_AGE + cdpfam*cdhp_fam + cdpinc*cd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001 $
+
+* bare
+
+* just upper
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + family_prem*prem_fam +
+                                chr_hmo*HMO_CHR + chr_ppo*PPO_CHR + chr_pos*POS_CHR + chr_hsa*hsa_chr +
+                                chr_hras*hras_chr + chr_hrag*hrag_chr + chr_hmo2*hmo2_chr /
+         U(NDHP,CDHP)=CD*CDHPnest+ CDPAGE*CDHP_AGE + cdpfam*cdhp_fam + cdpinc*cd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001 $
+
+* coinsurance & upper - new attempt at ivb 6-7-2010
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + upper*scub + coinsur*coins + family_prem*prem_fam +
+                                chr_epo*epo_chr + chr_hmo*HMO_CHR + chr_ppo*PPO_CHR + chr_pos*POS_CHR + chr_hsa*hsa_chr +
+                                chr_hrag*hrag_chr +  chr_hmo2*hmo2_chr /
+         U(NDHP,CDHP)=CD*CDHPnest+ CDPAGE*CDHP_AGE + cdpfam*cdhp_fam + cdpinc*cd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001 
+       ; Ivb = INCVLU  ;  Conditional $ 
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + upper*scub + coinsur*coins + family_prem*prem_fam +
+                                chr_epo*epo_chr + chr_hmo*HMO_CHR + chr_ppo*PPO_CHR + chr_pos*POS_CHR + chr_hsa*hsa_chr +
+                                chr_hras*hras_chr + chr_hmo2*hmo2_chr /
+         U(NDHP,CDHP)=CD*CDHPnest+ CDPAGE*CDHP_AGE + cdpfam*cdhp_fam + cdpinc*cd_incsc
+       ; ShowTree ; Describe ; Effects: scmedpr2(*); output=3 ; tlg=.0001 
+       ; Sequential $
+
+dstat ; rhs=cdhp_inc $
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + lower*sclb + upper*scub + coinsur*coins + family_prem*prem_fam /
+         U(NDHP,CDHP)=CD*CDHPnest+ CDPAGE*CDHP_AGE + cdpfam*cdhp_fam + cdpinc*cdhp_inc
+       ; ShowTree ; DESCRIBE; Effects: scmedpr2(*) $
+
+Calc   ; List ; LFIML = LogL $
+Calc   ; List ; LRTest = 2*(LFIML - L0) $
+Matrix ; List ; tau = b(7:8) ; Vtau = Part(Varb,7,8,7,8) $
+Wald   ; Fn1=tauF-1 ; Fn2=tauG-1
+       ; Start = Tau ; Var = Vtau ; Labels = tauF,tauG $
+
+
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2 + lower*sclb + upper*scub + coinsur*coins + family_prem*prem_fam +
+                                chr_hmo*HMO_CHR + chr_ppo*PPO_CHR + chr_pos*POS_CHR + chr_hsa*hsa_chr +
+                                chr_hras*hras_chr + chr_hrag*hrag_chr + chr_hmo2*hmo2_chr /
+         U(NDHP,CDHP)=ND*nDHPnest+ NDPAGE*NDHP_AGE + Ndpfam*Ndhp_fam + Ndpinc*Ndhp_inc
+       ; ShowTree ; Describe ; Effects: adjprem (*) $
+
+
+
+Nlogit ; Lhs = YVAR,CHOICES,PLANID
+       ; Choices=1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO
+       ; Tree =  NDHP(1EPO,2HMO,3HMO2,7POS,8PPO),CDHP(4HRAG,5HRAS,6HSA)       
+       ; Model:
+         U(1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO) = 
+                 premium*scmedpr2+ account*sclb + gap*scub + coinsur*coins + 
+                                hmo_dmy*hmo + ppo_dmy*ppo + pos_dmy*pos + hsa_dmy+hsa + hras_dmy*hras + 
+                                hrag_dmy*hrag + hmo2_dmy*hmo2 +
+                                chr_hmo*HMO_CHR + chr_ppo*PPO_CHR + chr_pos*POS_CHR + chr_hsa*hsa_chr +
+                                chr_hras*hras_chr + chr_hrag*hrag_chr + chr_hmo2*hmo2_chr /
+         U(NDHP,CDHP)=CD*CDHPnest+ CDPAGE*CDHP_AGE + cdpfam*cdhp_fam + cdpinc*cdhp_inc
+       ; ShowTree ; Describe ; Effects: scmedpr2 (*) $
+
+namelist ; x2 = scmedpr2, sCLB, sCUB, coins, prem_fam, HMO_CHR, PPO_CHR, POS_CHR, hsa_chr, 
+                hras_chr, hrag_chr, hmo2_chr $
+
+dstats;rhs=x2 $
+
+DISC;Lhs=yvar,CHOICES,PLANID; Rhs=scmedpr2, sCLB, sCUB, coins, prem_fam, 
+                            hmo,hmo2,ppo,pos,hsa,hras,hrag,
+                            HMO_CHR, PPO_CHR, POS_CHR, hsa_chr, 
+                                hras_chr, hrag_chr, hmo2_chr 
+    ;Choices = 1EPO,2HMO,3HMO2,4HRAG,5HRAS,6HSA,7POS,8PPO ; describe $
+
+
+
+
+Calc   ; List ; LFIML = LogL $
+Calc   ; List ; LRTest = 2*(LFIML - L0) $
+Matrix ; List ; tau = b(7:8) ; Vtau = Part(Varb,7,8,7,8) $
+Wald   ; Fn1=tauF-1 ; Fn2=tauG-1
+       ; Start = Tau ; Var = Vtau ; Labels = tauF,tauG $
+
+
+
+$
+
+
+                U(cdp)= cdp_INT + cdpinc*sinc + cdpage*sage + cdpfam*family + cdpgirls*female /
+                U(hmo)= hmo_INT + hmoinc*sinc + hmoage*sage + hmofam*family + hmogirls*female /
+                U(ppo)=           ppoinc*sinc + ppoage*sage + ppofam*family + ppogirls*female $
+
+ 
+
+NLOGIT ; Lhs=yvar,oices    
+       ; Choices = DEF1,DEF2,DEF3,PPO1,PPO2,PPO3,HMO1
+       ; Tree = cdp(DEF1,def2,DEF3),ppo(ppo1,PPO2,PPO3,HMO1)
+       ; Model: 
+            U(DEF2,DEF3,PPO1,PPO2,PPO3)=             prem*scmedpr2 + low*sclb + high*scub +COIN*COINS / 
+            U(cdp,PPO)= CDP_INT + cdpinc*sinc + cdpage*sage + cdpfam*family + cdpgirls*female + Binc*sinc + Bage*sage + Bfam*family + BCHR*CHrADG 
+       ; ShowTree ; Describe ; Effects:GC(*) $
+
+NLOGIT ; Lhs=yplan    
+       ; Choices = DEF2,DEF3,PPO1,PPO2,PPO3
+       ; Tree = cdp(def2,DEF3),ppo(ppo1,PPO2,PPO3)
+       ; Model: 
+            U(DEF2,DEF3,PPO1,PPO2,PPO3)=             prem*scmedpr2 + low*sclb + high*scub +COIN*COINS / 
+            U(cdp,PPO)= cdpinc*sinc + cdpage*sage + cdpfam*family + cdpgirls*female + Binc*sinc + Bage*sage + Bfam*family + BCHR*CHrADG 
+       ; ShowTree ; Describe ; Effects:GC(*) $
+Calc   ; List ; LFIML = LogL $
+Calc   ; List ; LRTest = 2*(LFIML - L0) $
+Matrix ; List ; tau = b(7:8) ; Vtau = Part(Varb,7,8,7,8) $
+Wald   ; Fn1=tauF-1 ; Fn2=tauG-1
+       ; Start = Tau ; Var = Vtau ; Labels = tauF,tauG $   
+
+July attempt
+
+namelist ; L1=YVAR,OICES,YPLAN $
+DSTATS;Rhs=L1; $
+
+NLOGIT ; Lhs=yvar ,OICES , yplan; 
+       ; Model: 
+            U(DEF2,DEF3,PPO1,PPO2,PPO3)=             prem*scmedpr2 + low*sclb + high*scub +COIN*COINS / 
+            U(cdp,PPO)= cdpinc*sinc + cdpagesage + cdpfam*family + cdpgirls*female + Binc*sinc + Bage*sage + Bfam*family + BCHR*CHrADG 
+       ; ShowTree ; Describe ; Effects:GC(*) $
+
+
+NLOGIT ; Lhs=yvar , oices
+       ; Choices = DEF1,DEF2,DEF3,PPO1,PPO2,PPO3,HMO1
+       ; Tree = cdp(def1,def2,DEF3),ppo(ppo1,PPO2,PPO3,HMO1)
+       ; Model: 
+            U(def1,DEF2,DEF3,PPO1,PPO2,PPO3,hmo1)=
+             prem*scmedpr2 + low*sclb + high*scub + COIN*COINS / 
+            U(cdp,PPO)= 
+             cdpinc*sinc + cdpage*sage + cdpfam*family 
+             + cdpgirls*female + Binc*sinc + Bage*sage + Bfam*family + BCHR*CHrADG 
+       ; ShowTree ; Describe ; Effects:scmedpr2(*) $
+Calc   ; List ; LFIML = LogL $
+Calc   ; List ; LRTest = 2*(LFIML - L0) $
+Matrix ; List ; tau = b(7:8) ; Vtau = Part(Varb,7,8,7,8) $
+Wald   ; Fn1=tauF-1 ; Fn2=tauG-1
+       ; Start = Tau ; Var = Vtau ; Labels = tauF,tauG $                             
+
+?----------------------------------------------------------------
+? FIML
+?----------------------------------------------------------------
+
+Nlogit ; Lhs = Mode ; Choices=Air,Train,Bus,Car
+       ; Tree= Fly(Air),Ground(Train,Bus,Car)
+       ; Model:
+         U(Air,Train,Bus,Car)=at*TASC+ab*BASC+bg*GC+bt*TTME /
+         U(Fly,Ground)=aa*AASC + g*HincAir 
+       ; ShowTree ; Describe ; Effects:GC(*) $
+Calc   ; List ; LFIML = LogL $
+Calc   ; List ; LRTest = 2*(LFIML - L0) $
+Matrix ; List ; tau = b(7:8) ; Vtau = Part(Varb,7,8,7,8) $
+Wald   ; Fn1=tauF-1 ; Fn2=tauG-1
+       ; Start = Tau ; Var = Vtau ; Labels = tauF,tauG $
+
+
+namelist ; x2 = SCMEDPR2,SCLB,SCUB,coins,
+                PPO2,PPO3,DEF1,DEF2,DEF3,HMO1,
+                PPO2_AGE,PPO3_AGE,DEF1_AGE,def2_age, DEF3_AGE,HMO1_AGE,
+                PPO2_INC,PPO3_INC,DEF1_INC,def2_inc, DEF3_INC,HMO1_INC , 
+                PPO2_FEM,PPO3_FEM,DEF1_FEM,def2_fem, DEF3_FEM,HMO1_FEM,
+                PPO2_FAM,PPO3_FAM,DEF1_FAM,def2_fam, DEF3_FAM,HMO1_FAM $ 
+
+DISC;Lhs=YVAR,CHOICES; Rhs=x2
+    ;Choices = P1,P2,P3,D1,D2,D3,H1 $
+
+namelist ; x2 = SCMEDPR2,SCLB,SCUB,coins,
+                DEF,HMO,
+                DEF_AGE,HMO_AGE,
+                DEF_INC,HMO_INC , 
+                DEF_FEM,HMO_FEM,
+                DEF_FAM,HMO_FAM $
+
+namelist ; x2 = SCMEDPR2,SCLB,SCUB,coins,
+                DEF,HMO $
+
+
+DISC;Lhs=newYVAR,A_CHOICE; Rhs=x2
+    ;Choices = P,D,H $
+
+namelist ; x2 = SCMEDPR2,SCLB,SCUB , COINS, 
+                PPO2,PPO1,DEF1, DEF3, HMO1,FAM_PREM,
+                PPO2_AGE,PPO1_AGE,DEF1_AGE,DEF3_AGE,HMO1_AGE,
+                PPO2_INC,PPO1_INC,DEF1_INC,DEF3_INC,HMO1_INC , 
+                PPO2_FEM,PPO1_FEM,DEF1_FEM,DEF3_FEM,HMO1_FEM,
+                PPO2_FAM,PPO1_FAM,DEF1_FAM,DEF3_FAM,HMO1_FAM, 
+                PPO2_CHR,PPO1_CHR,DEF1_CHR,DEF3_CHR,HMO1_CHR,
+                CHR_PREM,CHR_SCLB,CHR_SCUB,CHR_COIN,FAM_SCLB,FAM_SCUB $
+
+namelist ; x2 = SCMEDPR2,SCLB,SCUB , COINS, 
+                PPO2,PPO1,DEF1, DEF3, HMO1,FAM_PREM,
+                PPO2_AGE,PPO1_AGE,DEF1_AGE,DEF3_AGE,HMO1_AGE,
+                PPO2_INC,PPO1_INC,DEF1_INC,DEF3_INC,HMO1_INC , 
+                PPO2_FEM,PPO1_FEM,DEF1_FEM,DEF3_FEM,HMO1_FEM,
+                PPO2_FAM,PPO1_FAM,DEF1_FAM,DEF3_FAM,HMO1_FAM, 
+                PPO2_CHR,PPO1_CHR,DEF1_CHR,DEF3_CHR,HMO1_CHR $
+
+namelist ; x2 = SCMEDPR2,SCLB,SCUB , COINS, 
+                PPO2,PPO3,DEF1, DEF2,DEF3, PPO1,FAM_PREM,
+                PPO2_AGE,PPO3_AGE,DEF1_AGE,DEF2_AGE,DEF3_AGE,PPO1_AGE,
+                PPO2_INC,PPO3_INC,DEF1_INC,DEF2_INC,DEF3_INC,PPO1_INC , 
+                PPO2_FEM,PPO3_FEM,DEF1_FEM,DEF2_FEM,DEF3_FEM,PPO1_FEM,
+                PPO2_FAM,PPO3_FAM,DEF1_FAM,DEF2_FAM,DEF3_FAM,PPO1_FAM, 
+                PPO2_CHR,PPO3_CHR,DEF1_CHR,DEF2_CHR,DEF3_CHR,PPO1_CHR,
+                CHR_PREM,CHR_SCLB,CHR_SCUB,CHR_COIN,FAM_SCLB,FAM_SCUB $
+
+namelist ; x2 = SCMEDPR2,SCLB,SCUB , COINS, 
+                PPO2,PPO3,DEF1, DEF2,DEF3, HMO1,FAM_PREM,
+                PPO2_AGE,PPO3_AGE,DEF1_AGE,DEF2_AGE,DEF3_AGE,HMO1_AGE,
+                PPO2_INC,PPO3_INC,DEF1_INC,DEF2_INC,DEF3_INC,HMO1_INC , 
+                PPO2_FEM,PPO3_FEM,DEF1_FEM,DEF2_FEM,DEF3_FEM,HMO1_FEM,
+                PPO2_FAM,PPO3_FAM,DEF1_FAM,DEF2_FAM,DEF3_FAM,HMO1_FAM, 
+                CHR_PREM,CHR_SCLB,CHR_SCUB,CHR_COIN,FAM_SCLB,FAM_SCUB $
+
+namelist ; x2 = SCMEDPR2,
+                PPO2,PPO3,DEF1, DEF2,DEF3, HMO1,FAM_PREM,CHR_PREM,
+                PPO2_AGE,PPO3_AGE,DEF1_AGE,DEF2_AGE,DEF3_AGE,HMO1_AGE,
+                PPO2_INC,PPO3_INC,DEF1_INC,DEF2_INC,DEF3_INC,HMO1_INC , 
+                PPO2_FEM,PPO3_FEM,DEF1_FEM,DEF2_FEM,DEF3_FEM,HMO1_FEM,
+                PPO2_FAM,PPO3_FAM,DEF1_FAM,DEF2_FAM,DEF3_FAM,HMO1_FAM $
+
+namelist ; x2 = SCMEDPR2,
+                FAM_PREM,CHR_PREM,
+                PPO2_AGE,PPO3_AGE,DEF1_AGE,DEF2_AGE,DEF3_AGE,HMO1_AGE,
+                PPO2_INC,PPO3_INC,DEF1_INC,DEF2_INC,DEF3_INC,HMO1_INC , 
+                PPO2_FEM,PPO3_FEM,DEF1_FEM,DEF2_FEM,DEF3_FEM,HMO1_FEM,
+                PPO2_FAM,PPO3_FAM,DEF1_FAM,DEF2_FAM,DEF3_FAM,HMO1_FAM $
+
+dstats;rhs=x2 $
+
+dstats;rhs=oices $
+
+DISC;Lhs=yvar,CHOICES,altij; Rhs=x2
+    ;Choices = D1,d2,D3,P1,P2,P3,H1 $
+ 
+DISC;Lhs=yvar, OICES; Rhs=x2
+    ;Choices = P1,P2,P3,D1,D2,D3,H1 $
+
+DISC;Lhs=yvar, CHOICES; Rhs=x2
+    ;Choices = P1,P2,P3,D1,D3,H1 $
+
+DISC;Lhs=yvar,OICES; Rhs=SCMEDPR2,SCLB,SCUB,coins, PPO2,PPO3,DEF1, DEF2,DEF3, HMO1
+    ;Choices = P1,P2,P3,D1,D2,D3,H1 $
+
+DISC;Lhs=yvar,OICES; Rhs=SCMEDPR2, SCUB, PPO2,PPO1,DEF1, DEF2,DEF3, HMO1
+    ;Choices = P1,P2,P3,D1,D2,D3,H1 $
+
+     
+
+       ; Ivset: (plan)= [1] 
+       ; Ivset: (cdp) = [1] $
+
+
+
+pl2*d1_n1+pl4*u1_n2 +pl5*u2_n2
+
+dd*ppo_inc + er*ppo_age +fe*ppo_fam
+
++ bb*clb + bc*cub 
+
++ bb*sclb + bc*scub 
+
+       ; Ivset: (plan)= [1] 
+       ; Ivset: (hmo) = [1]
+       ; Ivset: (ppo) = [1] $
+
+namelist ; x2 = cmedprem $
+
+
+Greene's Example
+
+/*=================================================================
+Example 19.18.  Nested Logit Model
+*/=================================================================
+Read ; Nobs=840 ; Nvar = 7
+     ; Names=2 $
+Mode TTME Invc Invt GC Hinc Psize
+0  69   59  100   70   35 1 
+0  34   31  372   71   35 1 
+0  35   25  417   70   35 1 
+1   0   10  180   30   35 1 
+... total 840 observations in 210 groups of 4 ...
+?----------------------------------------------------------------
+Create ; AASC=Dmy(4,1)
+       ; TASC=Dmy(4,2)
+       ; BASC=Dmy(4,3)
+       ; CASC=Dmy(4,4) $
+Create ; HincAir = Hinc*AASC $
+?----------------------------------------------------------------
+? Unconditional
+?----------------------------------------------------------------
+Nlogit ; Lhs = Mode ; Choices=Air,Train,Bus,Car
+       ; Rhs = AASC,TASC,BASC,GC,TTME,HincAir $
+Calc   ; List ; L0 = LogL $
+?----------------------------------------------------------------
+? FIML
+?----------------------------------------------------------------
+Nlogit ; Lhs = Mode ; Choices=Air,Train,Bus,Car
+       ; Tree= Fly(Air),Ground(Train,Bus,Car)
+       ; Model:
+         U(Air,Train,Bus,Car)=at*TASC+ab*BASC+bg*GC+bt*TTME /
+         U(Fly,Ground)=aa*AASC + g*HincAir 
+       ; ShowTree ; Describe ; Effects:GC(*) $
+Calc   ; List ; LFIML = LogL $
+Calc   ; List ; LRTest = 2*(LFIML - L0) $
+Matrix ; List ; tau = b(7:8) ; Vtau = Part(Varb,7,8,7,8) $
+Wald   ; Fn1=tauF-1 ; Fn2=tauG-1
+       ; Start = Tau ; Var = Vtau ; Labels = tauF,tauG $
+?----------------------------------------------------------------
+? LIML
+?----------------------------------------------------------------
+Nlogit ; Lhs = Mode ; Choices=Air,Train,Bus,Car
+       ; IVB=IncVlu ; Conditional  
+       ; Tree= Fly(Air),Ground(Train,Bus,Car)
+       ; Model:
+         U(Air,Train,Bus,Car)=at*TASC+ab*BASC+bg*GC+bt*TTME /
+         U(Fly,Ground)=aa*AASC + g*HincAir $
+Create ; IVAir = AASC*IncVlu 
+       ; IVGround = (1-AASC) * IncVlu $
+Nlogit ; Lhs = Mode ; Choices=Air,Train,Bus,Car
+       ; Sequential ; Maxit=400 
+       ; Tree= Fly(Air),Ground(Train,Bus,Car)
+       ; Model:
+         U(Air,Train,Bus,Car)=at*TASC+ab*BASC+bg*GC+bt*TTME /
+         U(Fly,Ground)=aa*AASC + g*HincAir + tauA*IVAir + tauG*IvGround $
+/*
+
+
+Nlogit ; Lhs = yvar,choices ; 
+      ; Choices=Def1,def2,DEF3,PPO1,PPO2,PPO3,hmo1
+       ; Rhs = scmedpr2,sclb,scub,coinS $
+Calc   ; List ; L0 = LogL $
+
+Nlogit ; Lhs = yvar,choices ; 
+       ; Choices=Def1,def2,DEF3,PPO1,PPO2,PPO3,hmo1 
+       ; Tree= CDHP(DEF1,DEF2,DEF3),PPO(PPO1,PPO2,PPO3,hmo1)
+       ; Model:
+         U(Def1,def2,DEF3,PPO1,PPO2,PPO3,hmo1 )=at*scmedpr2+ab*sclb+bg*scub+bt*coinS  /
+         U(cdhp,ppo)=aa*coinS 
+       ; ShowTree ; Describe ; Effects:GC(*) $
+Calc   ; List ; LFIML = LogL $
+Calc   ; List ; LRTest = 2*(LFIML - L0) $
+Matrix ; List ; tau = b(7:8) ; Vtau = Part(Varb,7,8,7,8) $
+Wald   ; Fn1=tauF-1 ; Fn2=tauG-1
+       ; Start = Tau ; Var = Vtau ; Labels = tauF,tauG $
