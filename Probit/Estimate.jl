@@ -1,6 +1,7 @@
 using NLopt
 #using ForwardDiff
 using Statistics
+using SharedArrays
 
 function estimate_ng(d::ChoiceData, p0::Vector{Float64};method=:LN_NELDERMEAD)
     # Set up the optimization
@@ -40,79 +41,191 @@ function estimate_ng(d::ChoiceData, p0::Vector{Float64};method=:LN_NELDERMEAD)
     return ret, minf, minx
 end
 
-function particle_swarm(N,d::ChoiceData,p0::Vector{Float64};
-    tol_imp=1e-3,tol_dist=1e-3,verbose=true,
-    variances= nothing)
-    particles = Matrix{Float64}(undef,length(p0),N)
-    velocities = Matrix{Float64}(undef,length(p0),N)
-    p_best_pos = Matrix{Float64}(undef,length(p0),N)
+# function particle_swarm(N,d::ChoiceData,p0::Vector{Float64};
+#     tol_imp=1e-3,tol_dist=1e-3,verbose=true,
+#     variances= nothing)
+#
+#     particles = Matrix{Float64}(undef,length(p0),N)
+#     velocities = Matrix{Float64}(undef,length(p0),N)
+#     p_best_pos = Matrix{Float64}(undef,length(p0),N)
+#     p_best_eval = Vector{Float64}(undef,N)
+#
+#     func(x) = log_likelihood(d,x)
+#     max_eval = [func(p0)]
+#     max_pos = Vector{Float64}(undef,length(p0))
+#     max_pos[:] = p0[:]
+#     ## Parameters
+#     ω = 0.8
+#     ψ = 1.0
+#     ϕ = 1.0
+#
+#     if variances==nothing
+#         init_var = ones(length(p0))
+#     else
+#         init_var = variances
+#     end
+#
+#     gradient_test = 0
+#
+#
+#     for i in 1:N
+#         particles[:,i] = p0[:] + randn(length(p0)).*init_var
+#         velocities[:,i] = zeros(length(p0))
+#         p_best_pos[:,i] = particles[:,i]
+#         p_best_eval[i] = func(particles[:,i])
+#         if p_best_eval[i]>max_eval[1]
+#             max_eval[1] = p_best_eval[i]
+#             max_pos[:] = particles[:,i]
+#         end
+#     end
+#     avg_val = -1e3
+#     conv_cnt = 0
+#     itr = 0
+#     while true
+#         itr+=1
+#         for i in 1:N
+#             for d in 1:length(p0)
+#                 rp = rand(1)[1]
+#                 rg = rand(1)[1]
+#                 velocities[d,i] = ω*velocities[d,i] + ψ*rp*(p_best_pos[d,i]-particles[d,i]) + ϕ*rg*(max_pos[d]-particles[d,i])
+#                 particles[d,i]  = particles[d,i] + velocities[d,i]
+#             end
+#             p_eval = func(particles[:,i])
+#             # println("Particle $i at $p_eval")
+#             if p_eval>p_best_eval[i]
+#                 p_best_eval[i] = p_eval
+#                 p_best_pos[:,i] = particles[:,i]
+#                 if p_eval>max_eval[1]
+#                     max_eval[1] = p_eval
+#                     max_pos[:] = particles[:,i]
+#                 end
+#             end
+#         end
+#         # Evaluate Convergence
+#         MaxDist = abs(maximum(p_best_pos .- max_pos))
+#         ImpAv = abs((mean(p_best_eval) - avg_val)/avg_val)
+#         avg_val = mean(p_best_eval)
+#
+#         if (verbose) & (itr%1==0)
+#             println("Iteration: $itr")
+#             println(p_best_eval)
+#             # if (itr%5==0)
+#             #     println(p_best_pos)
+#             #     println(particles)
+#             #     println(velocities)
+#             # end
+#             println("Best Position: $max_pos")
+#             println("Maximum Value: $(max_eval[1])")
+#             println("Average Value: $avg_val, $ImpAv")
+#         end
+#         if itr>5
+#             if (ImpAv<tol_imp)
+#                 conv_cnt+=1
+#             else
+#                 conv_cnt = 0
+#             end
+#         end
+#         if (conv_cnt>5)
+#             println("Swarm Converged! Local search on best point")
+#             res = estimate_ng(d,max_pos)
+#             return res
+#
+#         end
+#         #println(particles)
+#     end
+# end
+
+function evaluate_particles_dist(particles::Matrix{Float64},d::ChoiceData)
+    N = size(particles,2)
+    p_eval = SharedArray{Float64}(N)
+    @sync @distributed for i in 1:N
+        y = log_likelihood(d,particles[:,i])
+        p_eval[i] = y
+    end
+    return p_eval
+end
+
+function particle_swarm_parallel(N::Int,p0::Vector{Float64},d::ChoiceData;
+    tol_imp=1e-3,tol_dist=1e-3,verbose=true,itr_max=15,variances=nothing)
+
+    K = length(p0)
+    particles = Matrix{Float64}(undef,K,N)
     p_best_eval = Vector{Float64}(undef,N)
 
-    func(x) = log_likelihood(d,x)
-    max_eval = [func(p0)]
-    max_pos = Vector{Float64}(undef,length(p0))
-    max_pos[:] = p0[:]
     ## Parameters
     ω = 0.8
     ψ = 1.0
     ϕ = 1.0
 
+    gradient_test = 0
+
+    ## Initialize Particle Starting Space
     if variances==nothing
         init_var = ones(length(p0))
     else
         init_var = variances
     end
 
-    gradient_test = 0
-
-
     for i in 1:N
         particles[:,i] = p0[:] + randn(length(p0)).*init_var
-        velocities[:,i] = zeros(length(p0))
-        p_best_pos[:,i] = particles[:,i]
-        p_best_eval[i] = func(particles[:,i])
-        if p_best_eval[i]>max_eval[1]
-            max_eval[1] = p_best_eval[i]
-            max_pos[:] = particles[:,i]
-        end
     end
-    avg_val = -1e3
+
+    ## Initialize Best Positions/Values
+    p_best_eval[:] .= -1e100
+    velocities = zeros(K,N)
+    p_best_pos = zeros(K,N)
+    max_eval = [-1e100]
+    max_pos = zeros(K)
+
+
+    avg_val = -1e100
     conv_cnt = 0
     itr = 0
-    while true
+    println("Start Estimation")
+
+    while itr<=itr_max
         itr+=1
+        #### Evaluate Particles ####
+        # evaluate_particles!(p_eval,particles,func)
+        p_eval = evaluate_particles_dist(particles,d)
+
+        #### Assign Particle-Specific Best Position and Global Best Position ####
         for i in 1:N
-            for d in 1:length(p0)
-                rp = rand(1)[1]
-                rg = rand(1)[1]
-                velocities[d,i] = ω*velocities[d,i] + ψ*rp*(p_best_pos[d,i]-particles[d,i]) + ϕ*rg*(max_pos[d]-particles[d,i])
-                particles[d,i]  = particles[d,i] + velocities[d,i]
-            end
-            p_eval = func(particles[:,i])
-            # println("Particle $i at $p_eval")
-            if p_eval>p_best_eval[i]
-                p_best_eval[i] = p_eval
+            if (p_eval[i]>p_best_eval[i]) & (p_eval[i]<0)
                 p_best_pos[:,i] = particles[:,i]
-                if p_eval>max_eval[1]
-                    max_eval[1] = p_eval
+                p_best_eval[i] = p_eval[i]
+                # println("Change: $(p_best_eval[i]),$(p_eval[i])")
+                if p_eval[i]>max_eval[1]
+                    max_eval[1] = p_eval[i]
                     max_pos[:] = particles[:,i]
                 end
             end
         end
+
+        #### Update Particle Positions ####
+        for i in 1:N
+            for d in 1:K
+                rp = rand(1)[1]*0.5 + 0.5
+                rg = rand(1)[1]*0.5 + 0.5
+                velocities[d,i] = ω*velocities[d,i] + ψ*rp*(p_best_pos[d,i]-particles[d,i]) + ϕ*rg*(max_pos[d]-particles[d,i])
+                particles[d,i]  = particles[d,i] + velocities[d,i]
+            end
+        end
+
         # Evaluate Convergence
         MaxDist = abs(maximum(p_best_pos .- max_pos))
         ImpAv = abs((mean(p_best_eval) - avg_val)/avg_val)
         avg_val = mean(p_best_eval)
 
-        if (verbose) & (itr%1==0)
+        if (verbose)
             println("Iteration: $itr")
-            println(p_best_eval)
+            #println(p_best_eval)
             # if (itr%5==0)
             #     println(p_best_pos)
             #     println(particles)
             #     println(velocities)
             # end
-            println("Best Position: $max_pos")
+            #println("Best Position: $max_pos")
             println("Maximum Value: $(max_eval[1])")
             println("Average Value: $avg_val, $ImpAv")
         end
@@ -129,6 +242,6 @@ function particle_swarm(N,d::ChoiceData,p0::Vector{Float64};
             return res
 
         end
-        #println(particles)
     end
+    return max_eval,max_pos
 end

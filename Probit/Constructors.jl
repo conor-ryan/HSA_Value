@@ -1,4 +1,6 @@
 using DataFrames
+import DataFrames.subset
+
 function ChoiceData(data_choice::DataFrame;
     est_draws = 1000,
     person=[:studyid],
@@ -10,10 +12,10 @@ function ChoiceData(data_choice::DataFrame;
     n, k = size(data_choice)
 
     # Convert everything to an array once for performance
-    i = convert(Matrix{Float64},data_choice[:,person])
-    j = convert(Matrix{Float64},data_choice[:,product])
-    X = convert(Matrix{Float64},data_choice[:,spec])
-    y = convert(Matrix{Float64},data_choice[:,choice])
+    i = Array(data_choice[!,person])
+    j = Array(data_choice[!,product])
+    X = Array(data_choice[!,spec])
+    y = Array(data_choice[!,choice])
 
     # index = Dict{Symbol, Int}()
     # dmat = Matrix{Float64}(undef,n,0)
@@ -86,4 +88,50 @@ function parDict(x::Vector{T},data::ChoiceData) where T
     s_ij = Vector{T}(undef,size(data.data,1))
 
     return parDict{T}(β,Σ,ϵ,s_ij)
+end
+
+
+########## People Iterator ###############
+# Define an Iterator Type
+mutable struct PersonIterator
+    data
+    id
+end
+
+# Construct an iterator to loop over people
+function eachperson(m::ChoiceData)
+    #ids = m._personIDs
+    ids = sort(Int.(keys(m._perDict)))
+    return PersonIterator(m, ids)
+end
+
+# Quickly Generate Subsets on People
+function subset(d::T, id,idx) where T<:ModelData
+
+    data = d.data[idx,:]
+    Y = d.Y[idx]
+    _perDict = Dict(id=>1:length(idx))
+    _optDict = Dict(id=>d._optDict[id])
+    # Don't subset any other fields for now...
+    return T(data,d.spec,Y,d.draws,
+            d.opt_num,1,_perDict,_optDict)
+end
+
+
+function Base.iterate(iter::PersonIterator, state=1)
+
+    if state> length(iter.id)
+        return nothing
+    end
+
+    # Get the current market
+    id = iter.id[state]
+
+    # Find which indices to use
+    idx = iter.data._perDict[id]
+
+    # Subset the data to just look at the current market
+    submod = subset(iter.data,id,idx)
+
+    return (submod, state + 1)
 end

@@ -19,8 +19,11 @@ mutable struct parDict{T}
 end
 
 #### Data Structure ####
+abstract type
+    ModelData
+end
 
-struct ChoiceData
+struct ChoiceData <: ModelData
     # Matrix of the data (pre-sorted)
     data::Matrix{Float64}
 

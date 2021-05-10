@@ -16,3 +16,27 @@ function log_likelihood(data::ChoiceData,p::Array{T,1}) where T
     ll = log_likelihood(data,pars)
     return ll
 end
+
+
+# Calculate Standard Errors
+# Hiyashi, p. 491
+function calc_Avar(d::ChoiceData,p::Array{T,1}) where T
+
+    Σ = zeros(length(p),length(p))
+    Pop = d.N
+    grad_obs = Vector{Float64}(undef,length(p))
+
+    for app in eachperson(d)
+        # println(keys(app._perDict))
+        f_obj(x) = log_likelihood(app,x)
+        grad_obs[:].=0
+        FiniteDiff.finite_difference_gradient!(grad_obs,f_obj, p0)
+        S_n = grad_obs*grad_obs'
+        Σ+= S_n
+    end
+
+    Σ = Σ./Pop
+    # This last line is correct
+    AsVar = inv(Σ)
+    return AsVar
+end
