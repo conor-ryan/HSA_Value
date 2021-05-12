@@ -3,6 +3,7 @@ using Distributed
 addprocs(3)
 
 @everywhere googleDrivePath = "G:/My Drive"
+#@everywhere googleDrivePath "C:/Users/Stefano/Documents/Research"
 @everywhere using FiniteDiff
 @everywhere using BenchmarkTools
 

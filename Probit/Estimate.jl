@@ -146,7 +146,7 @@ function evaluate_particles_dist(particles::Matrix{Float64},d::ChoiceData)
 end
 
 function particle_swarm_parallel(N::Int,p0::Vector{Float64},d::ChoiceData;
-    tol_imp=1e-3,tol_dist=1e-3,verbose=true,itr_max=15,variances=nothing)
+    tol_imp=1e-3,tol_dist=1e-3,verbose=true,itr_max=50,variances=nothing)
 
     K = length(p0)
     particles = Matrix{Float64}(undef,K,N)
@@ -243,5 +243,7 @@ function particle_swarm_parallel(N::Int,p0::Vector{Float64},d::ChoiceData;
 
         end
     end
-    return max_eval,max_pos
+    println("Iteration Exited. Local search on best point")
+    res = estimate_ng(d,max_pos)
+    return res
 end
