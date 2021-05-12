@@ -52,5 +52,5 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
     @everywhere df = nothing
     @everywhere GC.gc()
     estimate_Model(data,num_particles,p0,srch_var,
-                            "$googleDrivePath/HSA Probit/Results/Results-$datafile-draw$haltonDraws")
+                            "$googleDrivePath/HSA Probit/Results/Results-$data_file-draw$haltonDraws")
 end
