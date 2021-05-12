@@ -3,9 +3,13 @@ using Distributed
 addprocs(3)
 
 @everywhere googleDrivePath = "G:/My Drive"
-#@everywhere googleDrivePath "C:/Users/Stefano/Documents/Research"
+#@everywhere googleDrivePath = "C:/Users/Stefano/Documents/Research"
 @everywhere using FiniteDiff
 @everywhere using BenchmarkTools
+
+@everywhere data_file = "choice14_samp5"
+@everywhere haltonDraws = 10000
+
 
 @everywhere include("ProbitTypes.jl")
 @everywhere include("Halton.jl")
@@ -29,8 +33,6 @@ addprocs(3)
 @everywhere srch_var = [0.001;1;1;1;1;1;1;
                 .001;.001;.001;
                 1;1;1;1;1]
-
-@everywhere haltonDraws = 10000
 num_particles = 50
 
 
@@ -41,4 +43,4 @@ num_particles = 50
 @everywhere df = nothing
 @everywhere GC.gc()
 estimate_Model(data,num_particles,p0,srch_var,
-                        "$googleDrivePath/HSA Probit/Results/Test")
+                        "$googleDrivePath/HSA Probit/Results/Results-$datafile-draw$haltonDraws")

@@ -1,6 +1,6 @@
 using CSV
 using DataFrames
-df = CSV.read("$googleDrivePath/HSA Probit/Temp/choice14_samp5.csv",DataFrame)
+df = CSV.read("$googleDrivePath/HSA Probit/Temp/$data_file.csv",DataFrame)
 
 df[!,:plan2].=0.0
 df[!,:plan2][df[!,:newpid].==2] .= 1.0
