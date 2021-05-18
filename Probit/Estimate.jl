@@ -167,7 +167,11 @@ function particle_swarm_parallel(N::Int,p0::Vector{Float64},d::ChoiceData;
     end
 
     for i in 1:N
-        particles[:,i] = p0[:] + randn(length(p0)).*init_var
+        if i == 1
+            particles[:,i] = p0[:]
+        else
+            particles[:,i] = p0[:] + randn(length(p0)).*init_var
+        end
     end
 
     ## Initialize Best Positions/Values

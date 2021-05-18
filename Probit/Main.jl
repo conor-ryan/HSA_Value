@@ -19,8 +19,8 @@ addprocs(3)
 @everywhere include("Estimate.jl")
 @everywhere include("SpecificationRun.jl")
 
-data_file_vec = ["choice14_samp5","choice14_samp20","choice14_samp10"]
-halton_draw_vec = [10000,50000]
+data_file_vec = ["choice14_samp5"]#,"choice14_samp20","choice14_samp10"]
+halton_draw_vec = [10000,10001,50000,100000,200000]
 
 for halton_i in halton_draw_vec, data_i in data_file_vec
 
@@ -36,10 +36,13 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
                     :hra_depend,:hsa_depend,:hmo_depend]
 
 
-    @everywhere p0 = vcat(zeros(length(spec)),
-                            [1.5,2.0,-0.5,0.25,-0.5])
+    @everywhere p0 = vp0 = [-0.0005;-0.0005;-0.0005;-0.0005;.01;.01;.01;
+                            .0001;.0001;.0001;.01;.01;.01;
+                                    1.5;2.0;-0.5;0.25;-0.5]
 
-    @everywhere srch_var = ones(length(p0))
+    @everywhere srch_var = [0.01;0.01;0.01;0.01;1;1;1;
+                    .01;.01;.01;1;1;1;
+                    1;1;1;1;1]
     num_particles = 50
 
 

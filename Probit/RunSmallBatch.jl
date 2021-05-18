@@ -38,20 +38,24 @@ println(ll)
 
 V = calc_Avar(data,p0)
 
-p0[1]+=1e-6
-ll = log_likelihood(data,p0)
-println(ll)
+# p0[1]+=1e-6
+# ll = log_likelihood(data,p0)
+# println(ll)
+#
+#
+# test = iterate(eachperson(data),1)[1]
+#
+# pars = parDict(p0,test)
+# individual_shares(test,pars)
+# println(minimum(pars.s_ij))
+# ll = log_likelihood(test,p0)
+# println(ll)
 
+# variances = ones(length(p0))
+variances = [0.01;0.01;0.01;0.01;1;1;1;
+                .01;.01;.01;1;1;1;
+                1;1;1;1;1]
 
-test = iterate(eachperson(data),1)[1]
-
-pars = parDict(p0,test)
-individual_shares(test,pars)
-println(minimum(pars.s_ij))
-ll = log_likelihood(test,p0)
-println(ll)
-
-variances = ones(length(p0))
 println("Estimation Begin")
 estimate_Model(data,50,p0,variances,
                         "$googleDrivePath/HSA Probit/Results/Test")
