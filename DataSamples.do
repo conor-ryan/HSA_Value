@@ -12,7 +12,7 @@ save "Temp\State_StudyID", replace
 /// Read in 4-choice data /// 
 import delimited "Data\choice14.csv", clear 
 
-
+drop hmo* epo* hmo2* hrag* hras* hsa* pos* ppo* ndhp* cdhp*
 
 * Create plan name variable
 gen planname = ""
@@ -32,6 +32,12 @@ gen plan4 = 0
 replace plan2=1 if newpid==2
 replace plan3=1 if newpid==3
 replace plan4=1 if newpid==4
+
+
+gen hra = planid>=4 & planid<=5
+gen hsa = planid==6
+gen hmo = planid<=3 & planid>=1
+
 
 * New Plan ID Cost Interaction
 gen plan2_cost = 0
@@ -125,7 +131,7 @@ replace planname="PPO" if planid==8
 
 gen hra = planid>=4 & planid<=5
 gen hsa = planid==6
-gen hmo = planid<=3
+gen hmo = gen hmo = planid<=3 & planid>=1
 
 * New Plan ID Fixed Effect
 gen plan2 = 0

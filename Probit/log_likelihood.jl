@@ -37,6 +37,9 @@ function calc_Avar(d::ChoiceData,p::Array{T,1}) where T
 
     Σ = Σ./Pop
     # This last line is correct
+    E = eigen(Σ)
+    println("Eigenvalues: $(E.values)")
+    println("Eigenvectors: $(E.vectors)")
     AsVar = inv(Σ)
     return AsVar
 end

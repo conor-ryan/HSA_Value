@@ -12,7 +12,7 @@ include("log_likelihood.jl")
 include("Estimate.jl")
 include("SpecificationRun.jl")
 data_file = "choice14_samp5"
-haltonDraws = 1000
+haltonDraws = 10000
 include("Load.jl")
 spec_vars = [:logprem,:logprice_family,:logprice_age_40_60,:logprice_age_60plus,
                 :plan2,:plan3,:plan4,
