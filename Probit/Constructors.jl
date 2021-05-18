@@ -37,7 +37,7 @@ function ChoiceData(data_choice::DataFrame;
     opt_num = length(options)
     N = length(people)
 
-    draws = MVHaltonNormal(est_draws,opt_num-1)
+    draws = MVHaltonNormal(est_draws,opt_num-1,scrambled=false)
 
     ## Hard-Coded Default:
     # Location normalized product: 1st index

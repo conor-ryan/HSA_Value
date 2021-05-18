@@ -14,21 +14,21 @@ include("SpecificationRun.jl")
 data_file = "choice14_samp5"
 haltonDraws = 10000
 include("Load.jl")
-spec_vars = [:adjprem,
-                :plan2,:plan3,:plan4,
-                :hra_cost,:hsa_cost,:hmo_cost]
 # spec_vars = [:logprem,:logprice_family,:logprice_age_40_60,:logprice_age_60plus,
 #                 :plan2,:plan3,:plan4,
-#                 :hra_cost,:hsa_cost,:hmo_cost,
-#                 :hra_depend,:hsa_depend,:hmo_depend]
+#                 :hra_cost,:hsa_cost,:hmo_cost]
+spec_vars = [:logprem,:logprice_family,:logprice_age_40_60,:logprice_age_60plus,
+                :plan2,:plan3,:plan4,
+                :hra_cost,:hsa_cost,:hmo_cost,
+                :hra_depend,:hsa_depend,:hmo_depend]
 data = ChoiceData(df,
                 spec=spec_vars,
                 est_draws=haltonDraws)
 
-# p0 = [-0.0005;.01;.01;.01;.01;.01;.01;
-# .0001;.0001;.0001;
-#         1.5;2.0;-0.5;0.25;-0.5]
-p0 = vcat(zeros(length(spec_vars)),[1.5;2.0;-0.5;0.25;-0.5])
+p0 = [-0.0005;-0.0005;-0.0005;-0.0005;.01;.01;.01;
+.0001;.0001;.0001;.01;.01;.01;
+        1.5;2.0;-0.5;0.25;-0.5]
+# p0 = vcat(ones(length(spec_vars)),[1.5;2.0;-0.5;0.25;-0.5])
 
 pars = parDict(p0,data)
 individual_shares(data,pars)
