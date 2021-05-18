@@ -14,10 +14,13 @@ include("SpecificationRun.jl")
 data_file = "choice14_samp5"
 haltonDraws = 10000
 include("Load.jl")
-spec_vars = [:logprem,:logprice_family,:logprice_age_40_60,:logprice_age_60plus,
+spec_vars = [:adjprem,
                 :plan2,:plan3,:plan4,
-                :hra_cost,:hsa_cost,:hmo_cost,
-                :hra_depend,:hsa_depend,:hmo_depend]
+                :hra_cost,:hsa_cost,:hmo_cost]
+# spec_vars = [:logprem,:logprice_family,:logprice_age_40_60,:logprice_age_60plus,
+#                 :plan2,:plan3,:plan4,
+#                 :hra_cost,:hsa_cost,:hmo_cost,
+#                 :hra_depend,:hsa_depend,:hmo_depend]
 data = ChoiceData(df,
                 spec=spec_vars,
                 est_draws=haltonDraws)
@@ -34,6 +37,11 @@ ll = log_likelihood(data,p0)
 println(ll)
 
 V = calc_Avar(data,p0)
+
+p0[1]+=1e-6
+ll = log_likelihood(data,p0)
+println(ll)
+
 
 test = iterate(eachperson(data),1)[1]
 

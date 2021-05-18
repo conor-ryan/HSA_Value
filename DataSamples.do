@@ -77,6 +77,8 @@ gen price_family = adjprem*family
 
 * Log Premium 
 gen logprem = log(paycheck - adjprem) //Premiums are annual here, right?//
+* Use 100 log points, to help the numerical derivatives...
+replace logprem=logprem*100
 gen logprice_age_40_60 = 0
 gen logprice_age_60plus = 0
 replace logprice_age_40_60 = logprem if age>=40 & age<60
