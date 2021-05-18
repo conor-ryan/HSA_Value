@@ -30,18 +30,16 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
     println("Running Data $data_file with $haltonDraws draws")
 
     @everywhere include("Load.jl")
-    @everywhere spec=[:adjprem,:plan2,:plan3,:plan4,
-                            :coins,:sclb,:scub,
-                            :plan2_cost,:plan3_cost,:plan4_cost]
+    @everywhere spec= [:logprem,:logprice_family,:logprice_age_40_60,:logprice_age_60plus,
+                    :plan2,:plan3,:plan4,
+                    :hra_cost,:hsa_cost,:hmo_cost,
+                    :hra_depend,:hsa_depend,:hmo_depend]
 
 
-    @everywhere p0 = [-0.0005;.01;.01;.01;.01;.01;.01;
-                            .0001;.0001;.0001;
-                            1.5;2.0;-0.5;0.25;-0.5]
+    @everywhere p0 = vcat(zeros(length(spec)),
+                            1.5;2.0;-0.5;0.25;-0.5)
 
-    @everywhere srch_var = [0.001;1;1;1;1;1;1;
-                    .001;.001;.001;
-                    1;1;1;1;1]
+    @everywhere srch_var = ones(length(p0))
     num_particles = 50
 
 

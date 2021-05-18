@@ -1,11 +1,13 @@
 rm(list=ls())
 library(data.table)
 library(ggplot2)
-setwd("C:/Users/Conor/Documents/Research/HSA_Value")
+library(haven)
+setwd("G:/My Drive/HSA Probit")
 
 #### Read in Data ####
-df = as.data.table(read.csv("choice14/choice11.csv"))
-df2 = as.data.table(read.csv("choice14/choice14.csv"))
+df = as.data.table(read.csv("Data/choice11.csv"))
+df2 = as.data.table(read.csv("Data/choice14.csv"))
+df3 = read_sas("Data/choice11.sas7bdat")
 
 mkt_location = unique(df2[,c("STATE","studyid")])
 df = merge(df,mkt_location,all.x=TRUE,by.y="studyid",by.x="STUDYID")
