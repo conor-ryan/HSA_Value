@@ -40,11 +40,16 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
                             .0001;.0001;.0001;.01;.01;.01;
                                     1.5;2.0;-0.5;0.25;-0.5]
 
-    @everywhere srch_var = [0.01;0.01;0.01;0.01;1;1;1;
-                    .01;.01;.01;1;1;1;
-                    1;1;1;1;1]
+    # @everywhere srch_var = [0.01;0.01;0.01;0.01;1;1;1;
+    #                 .01;.01;.01;1;1;1;
+    #                 1;1;1;1;1]
+    @everywhere search_bounds = [ [-0.05,0.05],[-0.05,0.05],[-0.05,0.05],[-0.05,0.05],
+                                [-10,10],[-10,10],[-10,10],
+                                [-0.005,0.005],[-0.005,0.005],[-0.005,0.005],
+                                [-2,2],[-2,2],[-2,2],
+                                [0,10],[0,10],[-5,5],[-5,5],[-5,5]]
     num_particles = 50
-
+    @everywhere startSpace = permutedims(HaltonSpace(num_particles,length(spec),bounds),(2,1))
 
 
     @everywhere data = ChoiceData(df,
@@ -52,6 +57,6 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
                     est_draws=haltonDraws)
     @everywhere df = nothing
     @everywhere GC.gc()
-    estimate_Model(data,num_particles,p0,srch_var,
+    estimate_Model(data,startSpace,
                             "$googleDrivePath/HSA Probit/Results/Results-$data_file-draw$haltonDraws")
 end

@@ -145,10 +145,10 @@ function evaluate_particles_dist(particles::Matrix{Float64},d::ChoiceData)
     return p_eval
 end
 
-function particle_swarm_parallel(N::Int,p0::Vector{Float64},d::ChoiceData;
+function particle_swarm_parallel(p0::Matrix{Float64},d::ChoiceData;
     tol_imp=1e-3,tol_dist=1e-3,verbose=true,itr_max=50,variances=nothing)
 
-    K = length(p0)
+    K,N = size(p0)
     particles = Matrix{Float64}(undef,K,N)
     p_best_eval = Vector{Float64}(undef,N)
 
@@ -159,19 +159,9 @@ function particle_swarm_parallel(N::Int,p0::Vector{Float64},d::ChoiceData;
 
     gradient_test = 0
 
-    ## Initialize Particle Starting Space
-    if variances==nothing
-        init_var = ones(length(p0))
-    else
-        init_var = variances
-    end
 
     for i in 1:N
-        if i == 1
-            particles[:,i] = p0[:]
-        else
-            particles[:,i] = p0[:] + randn(length(p0)).*init_var
-        end
+        particles[:,i] = p0[:,i]
     end
 
     ## Initialize Best Positions/Values

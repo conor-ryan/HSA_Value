@@ -51,3 +51,11 @@ function MVHaltonNormal(n, dims; scrambled=true, burn=500)
     Z = norminvcdf.(U)
     return Z
 end
+
+function HaltonSpace(n::Int, dims::Int,bounds::Array{Array{Float64,1},1}; scrambled=true, burn=500)
+    S = MVHalton(n,dims)
+    for j in 1:dims
+        @. S[:,j] = S[:,j]*(bounds[j][2]-bounds[j][1]) + bounds[j][1]
+    end
+    return S
+end

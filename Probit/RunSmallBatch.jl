@@ -52,12 +52,17 @@ V = calc_Avar(data,p0)
 # println(ll)
 
 # variances = ones(length(p0))
-variances = [0.01;0.01;0.01;0.01;1;1;1;
-                .01;.01;.01;1;1;1;
-                1;1;1;1;1]
+search_bounds = [ [-0.05,0.05],[-0.05,0.05],[-0.05,0.05],[-0.05,0.05],
+                            [-10,10],[-10,10],[-10,10],
+                            [-0.005,0.005],[-0.005,0.005],[-0.005,0.005],
+                            [-2,2],[-2,2],[-2,2],
+                            [0,10],[0,10],[-5,5],[-5,5],[-5,5]]
+num_particles = 50
+startSpace = permutedims(HaltonSpace(num_particles,length(search_bounds),search_bounds),(2,1))
+
 
 println("Estimation Begin")
-estimate_Model(data,50,p0,variances,
+estimate_Model(data,startSpace,
                         "$googleDrivePath/HSA Probit/Results/Test")
 
 res = particle_swarm(50,data,p0,tol_imp=1e-5,tol_dist=1e-2,verbose=true,variances=variances)

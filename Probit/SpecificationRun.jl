@@ -1,9 +1,7 @@
 using LinearAlgebra
 
 function estimate_Model(data::ChoiceData,
-                        num_particles::Int,
-                        p_init::Vector{Float64},
-                        var_init::Vector{Float64},
+                        startSpace::Matrix{Float64},
                         file_out::String;
                         verbose=true)
 
@@ -11,8 +9,8 @@ function estimate_Model(data::ChoiceData,
     println("Estimation Begin")
 
     ## Estimate
-    res = particle_swarm_parallel(num_particles,p_init,data,
-            tol_imp=1e-5,tol_dist=1e-2,verbose=verbose,variances=var_init)
+    res = particle_swarm_parallel(startSpace,data,
+            tol_imp=1e-5,tol_dist=1e-2,verbose=verbose)
 
     flag, val, p_est = res
 
@@ -23,8 +21,8 @@ function estimate_Model(data::ChoiceData,
 
     ## Output DataFrame
     p_print = copy(p_est)
-    spec_label = String.(spec)
-    for i in length(spec):(length(p_est)-1)
+    spec_label = String.(data.spec)
+    for i in length(data.spec):(length(p_est)-1)
         spec_label=vcat(spec_label,"Var_parameter")
     end
 
