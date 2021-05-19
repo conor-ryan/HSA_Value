@@ -48,8 +48,8 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
                                 [-0.005,0.005],[-0.005,0.005],[-0.005,0.005],
                                 [-2,2],[-2,2],[-2,2],
                                 [0,10],[0,10],[-5,5],[-5,5],[-5,5]]
-    num_particles = 50
-    @everywhere startSpace = permutedims(HaltonSpace(num_particles,length(spec),bounds),(2,1))
+    num_particles = 1000
+    @everywhere startSpace = permutedims(HaltonSpace(num_particles,length(search_bounds),search_bounds),(2,1))
 
 
     @everywhere data = ChoiceData(df,
