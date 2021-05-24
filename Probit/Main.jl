@@ -1,9 +1,9 @@
 using Distributed
 
-addprocs(3)
+addprocs(14)
 
-@everywhere googleDrivePath = "G:/My Drive"
-#@everywhere googleDrivePath = "C:/Users/Stefano/Documents/Research"
+# @everywhere googleDrivePath = "G:/My Drive"
+@everywhere googleDrivePath = "C:/Users/Stefano/Documents/Research"
 @everywhere using FiniteDiff
 @everywhere using BenchmarkTools
 
@@ -19,8 +19,8 @@ addprocs(3)
 @everywhere include("Estimate.jl")
 @everywhere include("SpecificationRun.jl")
 
-data_file_vec = ["choice14_samp5"]#,"choice14_samp20","choice14_samp10"]
-halton_draw_vec = [10000,10001,50000,100000,200000]
+data_file_vec = ["choice11_samp10","choice14_samp20"]#,"choice14_samp10"]
+halton_draw_vec = [50000,50001,50002,100000,200000]
 
 for halton_i in halton_draw_vec, data_i in data_file_vec
 
@@ -31,28 +31,31 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
 
     @everywhere include("Load.jl")
     @everywhere spec= [:logprem,:logprice_family,:logprice_age_40_60,:logprice_age_60plus,
-                    :plan2,:plan3,:plan4,
+                    :plan2,:plan3,:plan4,:plan5,:plan6,:plan7,:plan8,
                     :hra_cost,:hsa_cost,:hmo_cost,
                     :hra_depend,:hsa_depend,:hmo_depend]
 
 
-    @everywhere p0 = vp0 = [-0.0005;-0.0005;-0.0005;-0.0005;.01;.01;.01;
-                            .0001;.0001;.0001;.01;.01;.01;
-                                    1.5;2.0;-0.5;0.25;-0.5]
-
-    # @everywhere srch_var = [0.01;0.01;0.01;0.01;1;1;1;
-    #                 .01;.01;.01;1;1;1;
-    #                 1;1;1;1;1]
-    @everywhere search_bounds = [ [-0.05,0.05],[-0.05,0.05],[-0.05,0.05],[-0.05,0.05],
-                                [-10,10],[-10,10],[-10,10],
+    search_bounds = [ [-0.05,0.05],[-0.05,0.05],[-0.05,0.05],[-0.05,0.05],
+                                [-10,10],[-10,10],[-10,10],[-10,10],[-10,10],[-10,10],[-10,10],
                                 [-0.005,0.005],[-0.005,0.005],[-0.005,0.005],
-                                [-2,2],[-2,2],[-2,2],
-                                [0,10],[0,10],[-5,5],[-5,5],[-5,5]]
-    num_particles = 1000
-    @everywhere startSpace = permutedims(HaltonSpace(num_particles,length(search_bounds),search_bounds),(2,1))
+                                [-0.005,0.005],[-0.005,0.005],[-0.005,0.005]]
+
+    # Add variance terms
+    for k in 1:(data.opt_num-2)
+            search_bounds = cat(search_bounds,[[-2,2]],dims=1)
+    end
+
+    # Add Covariance terms
+    for k in 1:( ((data.opt_num-1)^2 - (data.opt_num-1))/2 )
+            search_bounds = cat(search_bounds,[[-5,5]],dims=1)
+    end
+
+    num_particles = 10000
+    startSpace = permutedims(HaltonSpace(num_particles,length(search_bounds),search_bounds),(2,1))
 
 
-    @everywhere data = ChoiceData(df,
+    @everywhere data = ChoiceData(df,product=[:planid],
                     spec=spec,
                     est_draws=haltonDraws)
     @everywhere df = nothing

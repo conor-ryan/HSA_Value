@@ -196,6 +196,18 @@ function particle_swarm_parallel(p0::Matrix{Float64},d::ChoiceData;
             end
         end
 
+        if (itr==1) | (itr==5) | (itr%10==0)
+            thresh = median(p_best_eval)
+            keep_index = findall(p_best_eval.>=thresh)
+            particles = particles[:,keep_index]
+            p_eval = p_eval[keep_index]
+            p_best_pos = p_best_pos[:,keep_index]
+            p_best_eval = p_best_eval[keep_index]
+            velocities = velocities[:,keep_index]
+            N = size(particles,2)
+            println("Reduced swarm to $N")
+        end
+
         #### Update Particle Positions ####
         for i in 1:N
             for d in 1:K

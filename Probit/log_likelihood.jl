@@ -40,6 +40,7 @@ function calc_Avar(d::ChoiceData,p::Array{T,1}) where T
     E = eigen(Σ)
     println("Eigenvalues: $(E.values)")
     println("Eigenvectors: $(E.vectors)")
-    AsVar = inv(Σ)
-    return AsVar
+    Asvar = inv(Σ)
+    Beta_var = Asvar./d.N
+    return Beta_var
 end
