@@ -35,6 +35,10 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
                     :hra_cost,:hsa_cost,:hmo_cost,
                     :hra_depend,:hsa_depend,:hmo_depend]
 
+    @everywhere data = ChoiceData(df,product=[:planid],
+                    spec=spec,
+                    est_draws=haltonDraws)
+
 
     search_bounds = [ [-0.05,0.05],[-0.05,0.05],[-0.05,0.05],[-0.05,0.05],
                                 [-10,10],[-10,10],[-10,10],[-10,10],[-10,10],[-10,10],[-10,10],
@@ -55,9 +59,6 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
     startSpace = permutedims(HaltonSpace(num_particles,length(search_bounds),search_bounds),(2,1))
 
 
-    @everywhere data = ChoiceData(df,product=[:planid],
-                    spec=spec,
-                    est_draws=haltonDraws)
     @everywhere df = nothing
     @everywhere GC.gc()
     estimate_Model(data,startSpace,
