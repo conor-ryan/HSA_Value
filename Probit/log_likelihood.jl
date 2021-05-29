@@ -30,7 +30,7 @@ function calc_Avar(d::ChoiceData,p::Array{T,1}) where T
         # println(keys(app._perDict))
         f_obj(x) = log_likelihood(app,x)
         grad_obs[:].=0
-        FiniteDiff.finite_difference_gradient!(grad_obs,f_obj, p0)
+        FiniteDiff.finite_difference_gradient!(grad_obs,f_obj, p)
         S_n = grad_obs*grad_obs'
         Σ+= S_n
     end

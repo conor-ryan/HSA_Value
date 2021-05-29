@@ -19,8 +19,8 @@ addprocs(14)
 @everywhere include("Estimate.jl")
 @everywhere include("SpecificationRun.jl")
 
-data_file_vec = ["choice11_samp10","choice14_samp20"]#,"choice14_samp10"]
-halton_draw_vec = [50000,50001,50002,100000,200000]
+data_file_vec = ["choice14_samp10","choice11_samp10"]#,"choice14_samp10"]
+halton_draw_vec = [50000,100000]
 
 for halton_i in halton_draw_vec, data_i in data_file_vec
 
