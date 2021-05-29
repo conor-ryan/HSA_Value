@@ -19,7 +19,7 @@ addprocs(14)
 @everywhere include("Estimate.jl")
 @everywhere include("SpecificationRun.jl")
 
-data_file_vec = ["choice14_samp10","choice11_samp10"]#,"choice14_samp10"]
+data_file_vec = ["choice14_samp10"]#,"choice11_samp10"]#,"choice14_samp10"]
 halton_draw_vec = [50000,100000]
 
 for halton_i in halton_draw_vec, data_i in data_file_vec
@@ -31,7 +31,7 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
 
     @everywhere include("Load.jl")
     @everywhere spec= [:logprem,:logprice_family,:logprice_age_40_60,:logprice_age_60plus,
-                    :plan2,:plan3,:plan4,:plan5,:plan6,:plan7,:plan8,
+                    :plan2,:plan3,:plan4,#:plan5,:plan6,:plan7,:plan8,
                     :hra_cost,:hsa_cost,:hmo_cost,
                     :hra_depend,:hsa_depend,:hmo_depend]
 
@@ -41,7 +41,7 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
 
 
     search_bounds = [ [-0.05,0.05],[-0.05,0.05],[-0.05,0.05],[-0.05,0.05],
-                                [-10,10],[-10,10],[-10,10],[-10,10],[-10,10],[-10,10],[-10,10],
+                                [-10,10],[-10,10],[-10,10],#[-10,10],[-10,10],[-10,10],[-10,10],
                                 [-0.005,0.005],[-0.005,0.005],[-0.005,0.005],
                                 [-0.005,0.005],[-0.005,0.005],[-0.005,0.005]]
 
