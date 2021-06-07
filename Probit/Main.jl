@@ -35,7 +35,7 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
                     :hra_cost,:hsa_cost,:hmo_cost,
                     :hra_depend,:hsa_depend,:hmo_depend]
 
-    @everywhere data = ChoiceData(df,product=[:planid],
+    @everywhere data = ChoiceData(df,product=[:newpid],
                     spec=spec,
                     est_draws=haltonDraws)
 
@@ -55,7 +55,7 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
             search_bounds = cat(search_bounds,[[-5,5]],dims=1)
     end
 
-    num_particles = 10000
+    num_particles = 2000
     startSpace = permutedims(HaltonSpace(num_particles,length(search_bounds),search_bounds),(2,1))
 
 

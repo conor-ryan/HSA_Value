@@ -43,4 +43,5 @@ function calc_Avar(d::ChoiceData,p::Array{T,1}) where T
     Asvar = inv(Σ)
     Beta_var = Asvar./d.N
     return Beta_var
+    # return Σ
 end
