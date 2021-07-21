@@ -12,7 +12,7 @@ save "Temp\State_StudyID", replace
 /// Read in 4-choice data /// 
 import delimited "Data\choice14.csv", clear 
 
-drop hmo* epo* hmo2* hrag* hras* hsa* pos* ppo* ndhp* cdhp*
+drop hmo* epo* hmo2* hra* hsa* pos* ppo* ndhp* cdhp* 
 
 * Create plan name variable
 gen planname = ""
@@ -38,7 +38,6 @@ gen hra = planid>=4 & planid<=5
 gen hsa = planid==6
 gen hmo = planid<=3 & planid>=1
 
-
 * New Plan ID Cost Interaction
 gen plan2_cost = 0
 gen plan3_cost = 0 
@@ -52,20 +51,23 @@ gen hra_cost = hra*cost
 gen hra_chronic = hra*chronic
 gen hra_income = hra*paycheck
 gen hra_depend = hra*(dependen>=2)
+gen hra_over40 = hra*(age>=40)
 
 gen hsa_cost = hsa*cost
 gen hsa_chronic = hsa*chronic
 gen hsa_income = hsa*paycheck
 gen hsa_depend = hsa*(dependen>=2)
+gen hsa_over40 = hsa*(age>=40)
 
 gen hmo_cost = hmo*cost
 gen hmo_chronic = hmo*chronic
 gen hmo_income = hmo*paycheck
 gen hmo_depend = hmo*(dependen>=2)
-
+gen hmo_over40 = hmo*(age>=40)
 
 
 * Age - Premium Interactions
+
 gen price_age_40_60 = 0
 gen price_age_60plus = 0
 replace price_age_40_60 = adjprem if age>=40 & age<60
@@ -91,8 +93,6 @@ gen logprice_family = logprem*family
 // Drop observations with no income
 drop if paycheck<1
 
-
-
 save "Temp\choice14_temp", replace
 /// Sub-sample for estimation /// 
 foreach n in 5 10 20 {
@@ -106,6 +106,11 @@ foreach n in 5 10 20 {
 	merge 1:m studyid state using "Temp\choice14_temp"
 	sort studyid newpid
 	keep if _merge==3
+	
+	// Rename plan id variable
+	drop planid
+	rename newpid planid
+
 
 	save "Temp\choice14_samp`n'", replace
 	outsheet using "Temp\choice14_samp`n'.csv", comma replace
@@ -133,7 +138,7 @@ replace planname="PPO" if planid==8
 
 gen hra = planid>=4 & planid<=5
 gen hsa = planid==6
-gen hmo = gen hmo = planid<=3 & planid>=1
+gen hmo = planid<=3 & planid>=1
 
 * New Plan ID Fixed Effect
 gen plan2 = 0
@@ -156,16 +161,19 @@ gen hra_cost = hra*cost
 gen hra_chronic = hra*chronic
 gen hra_income = hra*paycheck
 gen hra_depend = hra*(dependen>=2)
+gen hra_over40 = hra*(age>=40)
 
 gen hsa_cost = hsa*cost
 gen hsa_chronic = hsa*chronic
 gen hsa_income = hsa*paycheck
 gen hsa_depend = hsa*(dependen>=2)
+gen hsa_over40 = hsa*(age>=40)
 
 gen hmo_cost = hmo*cost
 gen hmo_chronic = hmo*chronic
 gen hmo_income = hmo*paycheck
 gen hmo_depend = hmo*(dependen>=2)
+gen hmo_over40 = hmo*(age>=40)
 
 
 

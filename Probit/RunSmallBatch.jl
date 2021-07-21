@@ -9,9 +9,11 @@ include("Constructors.jl")
 include("EvalDemand.jl")
 include("log_likelihood.jl")
 include("Estimate.jl")
+include("Elasticity.jl")
+
 include("SpecificationRun.jl")
-data_file = "choice14_samp5"
-haltonDraws = 50000
+data_file = "choice14_samp10"
+haltonDraws = Int(1e5)
 include("Load.jl")
 # spec_vars = [:logprem,:logprice_family,:logprice_age_40_60,:logprice_age_60plus,
 #                 :plan2,:plan3,:plan4,
@@ -20,22 +22,46 @@ spec_vars = [:logprem,:logprice_family,:logprice_age_40_60,:logprice_age_60plus,
                 :plan2,:plan3,:plan4,#:plan5,:plan6,:plan7,:plan8,
                 :hra_cost,:hsa_cost,:hmo_cost,
                 :hra_depend,:hsa_depend,:hmo_depend]
-data = ChoiceData(df,product=[:planid],
+data = ChoiceData(df,product=[:newpid],
                 spec=spec_vars,
                 est_draws=haltonDraws)
 
-p0 = rand(100)
 
-pars = parDict(p0,data)
-individual_shares(data,pars)
-println(minimum(pars.s_ij))
-ll = log_likelihood(data,p0)
-println(ll)
+# println(minimum(pars.s_ij))
+# ll = log_likelihood(data,p0)
+# println(ll)
 
-p_est = [0.020473887653262697, -0.005726597522972721, -0.0062042829161203066, -0.004818632418367471, -0.8193564280786587, -0.985434515819953, -0.5103057051346926, -4.6300019602959556e-5, -0.0001304257049990771, -0.0001330656093732179, 0.009858338056940787, -0.06524783344203014, 0.05838648016892095, -11.049853755070512, 0.31585400920138873, 19.282075441026336, 0.37566369165701297, 0.6751947168595258, 0.47141542189065044, 0.2576305380647831, 1.1429254820680494, -0.6214535802030503, 1.018765340167648, 0.9616158282257881, 0.9003585177385274, -0.07642815423690802, 17.66062183632715,
--0.27706556130435556, -0.01865041634636931, -0.03327482036923525, -29.737320916342078, -0.0941466599020705, -0.07853947538468303, -0.08361268709870262, 0.27432935642805967, 0.022947568441646613, 0.007394341251062025, 0.032492818166762326, 0.0012026664345907757, -0.10995481879242688]
+p_est = [0.008206298,
+0.020394749,
+-0.017417379,
+-0.017130658,
+-1.276732883,
+-9.283947307,
+-0.177432921,
+2.00E-05,
+-0.000485085,
+-0.00056846,
+0.024757979,
+-0.003068383,
+0.016861394,
+1.694201115,
+-3.38273815,
+2.093712438,
+-1.60235834,
+-0.442266786]
+
 p0 = p_est
-V = calc_Avar(data,p0)
+
+p = 0.0
+opt = 1
+index = Int.(1:4)
+
+grad = calc_deriv(index,data,p_est)
+
+pars = parDict(p_est,data)
+individual_shares(data,pars)
+
+
 
 # p0[1]+=1e-6
 # ll = log_likelihood(data,p0)

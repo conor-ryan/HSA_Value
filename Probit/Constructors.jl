@@ -1,4 +1,5 @@
 using DataFrames
+using Distributions
 import DataFrames.subset
 
 function ChoiceData(data_choice::DataFrame;
@@ -6,7 +7,8 @@ function ChoiceData(data_choice::DataFrame;
     person=[:studyid],
     product=[:newpid],
     spec=[:adjprem],
-    choice=[:yvar])
+    choice=[:yvar],
+    halton=true)
 
     # Get the size of the data
     n, k = size(data_choice)
@@ -37,8 +39,13 @@ function ChoiceData(data_choice::DataFrame;
     opt_num = length(options)
     N = length(people)
 
-    draws = MVHaltonNormal(est_draws,opt_num-1,scrambled=false)
-
+    if halton
+        draws = MVHaltonNormal(est_draws,opt_num-1,scrambled=false)
+    else
+        Ω = Normal()
+        draws = rand(Ω,(est_draws,opt_num-1))
+        # draws = MVNormal(est_draws,opt_num-1,scrambled=false)
+    end
     ## Hard-Coded Default:
     # Location normalized product: 1st index
     # Scale normalized product: 2nd index
