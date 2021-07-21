@@ -33,15 +33,17 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
     @everywhere spec= [:logprem,:logprice_family,:logprice_age_40_60,:logprice_age_60plus,
                     :plan2,:plan3,:plan4,#:plan5,:plan6,:plan7,:plan8,
                     :hra_cost,:hsa_cost,:hmo_cost,
-                    :hra_depend,:hsa_depend,:hmo_depend]
+                    :hra_depend,:hsa_depend,:hmo_depend,
+                    :hra_over40,:hsa_over40,:hmo_over40]
 
-    @everywhere data = ChoiceData(df,product=[:newpid],
+    @everywhere data = ChoiceData(df,product=[:planid],
                     spec=spec,
                     est_draws=haltonDraws)
 
 
     search_bounds = [ [-0.05,0.05],[-0.05,0.05],[-0.05,0.05],[-0.05,0.05],
                                 [-10,10],[-10,10],[-10,10],#[-10,10],[-10,10],[-10,10],[-10,10],
+                                [-0.005,0.005],[-0.005,0.005],[-0.005,0.005],
                                 [-0.005,0.005],[-0.005,0.005],[-0.005,0.005],
                                 [-0.005,0.005],[-0.005,0.005],[-0.005,0.005]]
 
@@ -55,7 +57,7 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
             search_bounds = cat(search_bounds,[[-5,5]],dims=1)
     end
 
-    num_particles = 2000
+    num_particles = 6000
     startSpace = permutedims(HaltonSpace(num_particles,length(search_bounds),search_bounds),(2,1))
 
 

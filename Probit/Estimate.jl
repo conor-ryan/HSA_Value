@@ -196,7 +196,7 @@ function particle_swarm_parallel(p0::Matrix{Float64},d::ChoiceData;
             end
         end
 
-        if (itr==1) | (itr==5) | (itr%10==0)
+        if (itr==1) | (itr==5)
             thresh = median(p_best_eval)
             keep_index = findall(p_best_eval.>=thresh)
             particles = particles[:,keep_index]

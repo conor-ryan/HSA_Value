@@ -21,8 +21,9 @@ include("Load.jl")
 spec_vars = [:logprem,:logprice_family,:logprice_age_40_60,:logprice_age_60plus,
                 :plan2,:plan3,:plan4,#:plan5,:plan6,:plan7,:plan8,
                 :hra_cost,:hsa_cost,:hmo_cost,
-                :hra_depend,:hsa_depend,:hmo_depend]
-data = ChoiceData(df,product=[:newpid],
+                :hra_depend,:hsa_depend,:hmo_depend,
+                :hra_over40,:hsa_over40,:hmo_over40]
+data = ChoiceData(df,product=[:planid],
                 spec=spec_vars,
                 est_draws=haltonDraws)
 
