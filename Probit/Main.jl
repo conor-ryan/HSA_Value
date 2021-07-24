@@ -31,7 +31,7 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
 
     @everywhere include("Load.jl")
     @everywhere spec= [:logprem,:logprice_family,:logprice_age_40_60,:logprice_age_60plus,
-                    :plan2,:plan3,:plan4,#:plan5,:plan6,:plan7,:plan8,
+                    :plan2,:plan3,:plan4,:plan5,:plan6,:plan7,:plan8,
                     :hra_cost,:hsa_cost,:hmo_cost,
                     :hra_depend,:hsa_depend,:hmo_depend,
                     :hra_over40,:hsa_over40,:hmo_over40]
@@ -42,7 +42,7 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
 
 
     search_bounds = [ [-0.05,0.05],[-0.05,0.05],[-0.05,0.05],[-0.05,0.05],
-                                [-10,10],[-10,10],[-10,10],#[-10,10],[-10,10],[-10,10],[-10,10],
+                                [-10,10],[-10,10],[-10,10],[-10,10],[-10,10],[-10,10],[-10,10],
                                 [-0.005,0.005],[-0.005,0.005],[-0.005,0.005],
                                 [-0.005,0.005],[-0.005,0.005],[-0.005,0.005],
                                 [-0.005,0.005],[-0.005,0.005],[-0.005,0.005]]
