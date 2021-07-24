@@ -19,7 +19,7 @@ addprocs(14)
 @everywhere include("Estimate.jl")
 @everywhere include("SpecificationRun.jl")
 
-data_file_vec = ["choice14_samp10"]#,"choice11_samp10"]#,"choice14_samp10"]
+data_file_vec = ["choice11_samp10"]#,"choice11_samp10"]#,"choice14_samp10"]
 halton_draw_vec = [50000,100000]
 
 for halton_i in halton_draw_vec, data_i in data_file_vec
@@ -57,7 +57,7 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
             search_bounds = cat(search_bounds,[[-5,5]],dims=1)
     end
 
-    num_particles = 6000
+    num_particles = 100
     startSpace = permutedims(HaltonSpace(num_particles,length(search_bounds),search_bounds),(2,1))
 
 

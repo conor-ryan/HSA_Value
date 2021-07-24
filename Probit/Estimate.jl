@@ -146,7 +146,7 @@ function evaluate_particles_dist(particles::Matrix{Float64},d::ChoiceData)
 end
 
 function particle_swarm_parallel(p0::Matrix{Float64},d::ChoiceData;
-    tol_imp=1e-3,tol_dist=1e-3,verbose=true,itr_max=50,variances=nothing)
+    tol_imp=1e-3,tol_dist=1e-3,verbose=true,itr_max=2,variances=nothing)
 
     K,N = size(p0)
     particles = Matrix{Float64}(undef,K,N)

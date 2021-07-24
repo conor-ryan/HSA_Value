@@ -94,6 +94,10 @@ gen logprice_family = logprem*family
 drop if paycheck<1
 
 save "Temp\choice14_temp", replace
+
+
+clogit yvar logprem logprice_family logprice_age_40_60 logprice_age_60plus plan2 plan3 plan4 hra_cost hsa_cost hmo_cost hra_depend hsa_depend hmo_depend hra_over40 hsa_over40 hmo_over40, group(studyid)
+
 /// Sub-sample for estimation /// 
 foreach n in 5 10 20 {
 	use "Temp\choice14_temp", clear
