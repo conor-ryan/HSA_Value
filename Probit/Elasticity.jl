@@ -1,31 +1,3 @@
-function calc_elas(d::ChoiceData,p::Array{T,1}) where T
-
-
-
-    Σ = zeros(length(p),length(p))
-    Pop = d.N
-    grad_obs = Vector{Float64}(undef,length(p))
-
-    for app in eachperson(d)
-        # println(keys(app._perDict))
-        f_obj(x) = log_likelihood(app,x)
-        grad_obs[:].=0
-        FiniteDiff.finite_difference_gradient!(grad_obs,f_obj, p)
-        S_n = grad_obs*grad_obs'
-        Σ+= S_n
-    end
-
-    Σ = Σ./Pop
-    # This last line is correct
-    E = eigen(Σ)
-    println("Eigenvalues: $(E.values)")
-    println("Eigenvectors: $(E.vectors)")
-    Asvar = inv(Σ)
-    Beta_var = Asvar./d.N
-    return Beta_var
-    # return Σ
-end
-
 function calc_deriv(price_indices::Vector{Int},d::ChoiceData,p_est::Vector{Float64})
     X_adj = zeros(d.opt_num,size(d.data,2))
     f_obj(x) = deriv_func(x,price_indices,d,p_est,X_adj)
@@ -81,7 +53,7 @@ function individual_shares_deriv(data::ChoiceData,pars::parDict{T},X_adj::Matrix
     return nothing
 end
 
-function elasticity(price_indices::Vector{Int},d::ChoiceData,p_est::Vector{Float64},df::DataFrame,pars::ParDict{Float64})
+function elasticity(price_indices::Vector{Int},d::ChoiceData,p_est::Vector{Float64},df::DataFrame,pars::parDict{Float64})
     grad = calc_deriv(price_indices,d,p_est)
     elas_matrix = zeros(d.opt_num,d.opt_num)
     count_matrix = zeros(d.opt_num,d.opt_num)
