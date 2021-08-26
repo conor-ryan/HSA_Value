@@ -20,7 +20,7 @@ addprocs(14)
 @everywhere include("SpecificationRun.jl")
 
 data_file_vec = ["choice11_samp10"]#,"choice11_samp10"]#,"choice14_samp10"]
-halton_draw_vec = [50000,100000]
+halton_draw_vec = [5000,50000,100000]
 
 for halton_i in halton_draw_vec, data_i in data_file_vec
 
@@ -49,7 +49,7 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
 
     # Add variance terms
     for k in 1:(data.opt_num-2)
-            search_bounds = cat(search_bounds,[[-2,2]],dims=1)
+            search_bounds = cat(search_bounds,[[0,3]],dims=1)
     end
 
     # Add Covariance terms

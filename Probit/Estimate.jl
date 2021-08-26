@@ -9,6 +9,7 @@ function estimate_ng(d::ChoiceData, p0::Vector{Float64};method=:LN_NELDERMEAD)
     ftol_rel!(opt,1e-8)
     xtol_rel!(opt,1e-8)
     maxtime!(opt, 500000)
+    force_stop!(opt,0)
 
     # unbounded_len = length(data.spec) + (data.opt_num-2)
     # bounded_len = length(p0) - unbounded_len
@@ -23,10 +24,13 @@ function estimate_ng(d::ChoiceData, p0::Vector{Float64};method=:LN_NELDERMEAD)
     function ll(x, grad)
         count +=1
         x_displ = x[:]
-        # println("Iteration $count at $x_displ")
-        obj = ll(x)
-        # println("Objective equals $obj on iteration $count")
 
+
+        obj = ll(x)
+        if (count%50)==0
+            println("Iteration $count at $x_displ")
+            println("Objective equals $obj on iteration $count")
+        end
         return obj
     end
 
@@ -249,7 +253,7 @@ function particle_swarm_parallel(p0::Matrix{Float64},d::ChoiceData;
 
         end
     end
-    println("Iteration Exited. Local search on best point")
+    println("Iteration Exited. Local search on best point: $max_pos")
     res = estimate_ng(d,max_pos)
     return res
 end

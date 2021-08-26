@@ -1,9 +1,8 @@
-using LinearAlgebra
-
 function estimate_Model(data::ChoiceData,
                         startSpace::Matrix{Float64},
                         file_out::String;
-                        verbose=true)
+                        verbose=true,
+                        testing_run=false)
 
 
     println("Estimation Begin")
@@ -13,6 +12,10 @@ function estimate_Model(data::ChoiceData,
             tol_imp=1e-5,tol_dist=1e-2,verbose=verbose)
 
     flag, val, p_est = res
+
+    if testing_run
+        return val, p_est
+    end
 
     pars = parDict(p_est,data)
 

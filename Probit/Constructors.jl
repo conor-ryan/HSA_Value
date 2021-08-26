@@ -8,7 +8,8 @@ function ChoiceData(data_choice::DataFrame;
     product=[:newpid],
     spec=[:adjprem],
     choice=[:yvar],
-    halton=true)
+    halton=true,
+    GHK = true)
 
     # Get the size of the data
     n, k = size(data_choice)
@@ -40,15 +41,32 @@ function ChoiceData(data_choice::DataFrame;
     N = length(people)
 
     if halton
-        draws = MVHaltonNormal(est_draws,opt_num-1,scrambled=false)
+        if GHK
+            draws = MVHalton(est_draws,opt_num,scrambled=true)
+            draws = permutedims(draws,(2,1))
+        else
+            draws = MVHaltonNormal(est_draws,opt_num-1,scrambled=false)
+        end
     else
-        Ω = Normal()
-        draws = rand(Ω,(est_draws,opt_num-1))
+        if GHK
+            Ω = Uniform()
+            draws = rand(Ω,(est_draws,opt_num))
+        else
+            Ω = Normal()
+            draws = rand(Ω,(est_draws,opt_num-1))
+        end
         # draws = MVNormal(est_draws,opt_num-1,scrambled=false)
     end
     ## Hard-Coded Default:
     # Location normalized product: 1st index
     # Scale normalized product: 2nd index
+
+    #### Check that X is full rank
+    # println("Check Collinearity")
+    # cov_test = X*X'
+    # ev = sort(eigvals(cov_test))
+    # smallest_ev = ev[1]
+    # println("Smallest Data Eigenvalue: $smallest_ev")
 
     # Make the data object
     m = ChoiceData(X,spec,y[:],draws,opt_num,N,_perDict,_optDict)
@@ -61,8 +79,10 @@ function parDict(x::Vector{T},data::ChoiceData) where T
     # Parameter Vectors
     β = x[1:length(data.spec)]
     opt_num = data.opt_num
-    A = Matrix{T}(undef,opt_num-1,opt_num-1)
-    A[:].=0.0
+    L1 = Matrix{T}(undef,opt_num-1,opt_num-1)
+    L = Matrix{T}(undef,opt_num,opt_num)
+    L1[:].=0.0
+    L[:].=0.0
     # A[1,1]=1.0
     k = [length(data.spec)+1]
     # for i in 2:(opt_num-1)
@@ -70,31 +90,40 @@ function parDict(x::Vector{T},data::ChoiceData) where T
     #     k+=1
     # end
     for i in 1:(opt_num-1)
-        for j in i:(opt_num-1)
-            if (i==j) & (i==1)
-                A[i,i] = 1.0
-            elseif (i==j)
+        if (i==1)
+            L1[i,i] = 1.0
+        else
+            corr =x[k[1]]
+            L1[i,i] = 1e-7 + corr^2
+            k[:] .+= 1
+        end
+    end
+
+    for i in 1:(opt_num-1)
+        for j in 1:i
+            if (i!=j)
                 corr =x[k[1]]
-                A[i,j] = corr^2
-                k[:] .+= 1
-            else
-                corr =x[k[1]]
-                A[i,j] = corr
+                L1[i,j] = corr
                 k[:] .+= 1
             end
         end
     end
-    # Initialize Idiosyncratic Draws
-    Σ = A'*A
-    ϵ = Matrix{T}(undef,opt_num,size(data.draws,1))
-    ϵ[1,:].=0.0
-    ϵ[2:opt_num,:] = permutedims(data.draws*A,(2,1))
-
+    # # Initialize Idiosyncratic Draws
+    # Σ = L1*L1'
+    # ϵ = Matrix{T}(undef,opt_num,size(data.draws,1))
+    # ϵ[1,:].=0.0
+    # ϵ[2:opt_num,:] = permutedims(data.draws*L1,(2,1))
 
     # Initialize individual shares
     s_ij = Vector{T}(undef,size(data.data,1))
+    ll_i = Vector{T}(undef,length(keys(data._perDict)))
 
-    return parDict{T}(β,Σ,ϵ,s_ij)
+    # Objects for GHK
+    L[(2:opt_num),(2:opt_num)] = L1[:]
+    Ω = L*L'
+
+
+    return parDict{T}(β,Ω,s_ij,ll_i)
 end
 
 

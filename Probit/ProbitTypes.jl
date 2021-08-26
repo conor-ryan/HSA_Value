@@ -8,14 +8,17 @@ mutable struct parDict{T}
     # Parameter Vector
     β::Vector{T}
 
-    # Covariance Matrix
-    Σ::Matrix{T}
+    # Full Covariance Matrix
+    Ω::Matrix{T}
 
     # Idiosyncratic Draws
-    ϵ::Matrix{T}
+    # ϵ::Matrix{T}
 
     # Predicted Shares (ij pairs)
     s_ij::Vector{T}
+
+    # Log likelihood of the observation
+    ll_i::Vector{T}
 end
 
 #### Data Structure ####
