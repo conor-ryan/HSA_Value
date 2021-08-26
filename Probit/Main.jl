@@ -1,4 +1,5 @@
 using Distributed
+using Dates
 
 addprocs(14)
 
@@ -22,10 +23,12 @@ addprocs(14)
 data_file_vec = ["choice11_samp10"]#,"choice11_samp10"]#,"choice14_samp10"]
 halton_draw_vec = [5000,50000,100000]
 
+
 for halton_i in halton_draw_vec, data_i in data_file_vec
 
     @everywhere data_file = $data_i
     @everywhere haltonDraws = $halton_i
+    @everywhere rundate = Dates.today()
 
     println("Running Data $data_file with $haltonDraws draws")
 
@@ -64,5 +67,5 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
     @everywhere df = nothing
     @everywhere GC.gc()
     estimate_Model(data,startSpace,
-                            "$googleDrivePath/HSA Probit/Results/Results-$data_file-draw$haltonDraws")
+                            "$googleDrivePath/HSA Probit/Results/Results-$rundate-$data_file-draw$haltonDraws")
 end
