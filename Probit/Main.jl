@@ -60,7 +60,7 @@ for halton_i in halton_draw_vec, data_i in data_file_vec
             search_bounds = cat(search_bounds,[[-5,5]],dims=1)
     end
 
-    num_particles = 100
+    num_particles = 1500
     startSpace = permutedims(HaltonSpace(num_particles,length(search_bounds),search_bounds),(2,1))
 
 

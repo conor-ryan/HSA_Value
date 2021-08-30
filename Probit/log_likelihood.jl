@@ -36,7 +36,7 @@ function log_likelihood(data::ChoiceData,p::Array{T,1}) where T
 
 end
 
-function avar_obj_func(x::Vector{Float64},app::ChoiceData,p_est::Float64)
+function avar_obj_func(x::Vector{Float64},app::ChoiceData,p_est::Vector{Float64})
     p = p_est .+ x
     return log_likelihood(app,p)
 end
@@ -60,10 +60,10 @@ function calc_Avar(d::ChoiceData,p::Array{T,1}) where T
     end
 
     Σ = Σ./Pop
-    # This last line is correct
-    E = eigen(Σ)
-    println("Eigenvalues: $(E.values)")
-    println("Eigenvectors: $(E.vectors)")
+    # # This last line is correct
+    # E = eigen(Σ)
+    # println("Eigenvalues: $(E.values)")
+    # println("Eigenvectors: $(E.vectors)")
     Asvar = inv(Σ)
     Beta_var = Asvar./d.N
     return Beta_var

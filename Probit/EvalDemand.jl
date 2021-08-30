@@ -68,10 +68,24 @@ function calc_share_GHK(V_tilde::Vector{Float64},opts_tilde::Vector{Int},
                 dot_product += L_η[j,k]*η[k]
             end
             z1 = -(V_tilde[j] + dot_product)/σ_tilde[j]
+            if (z1>8)
+                z1 = 8
+            elseif (z1<-8)
+                z1 = -8
+            end
             p = cdf(Normal(),z1)
             @inbounds z2 = data.draws[opts_tilde[j],n]*p
+            η_new = norminvcdf(z2)
+
             η[j] = norminvcdf(z2)
             prob_n = prob_n*p
+        end
+        if isnan(prob_n)
+            println("n: $n, $(isnan(prob_n))")
+        end
+        if isnan(prob_est)
+            println("n: $n, $(isnan(prob_n))")
+            break
         end
         prob_est += prob_n
     end
