@@ -52,7 +52,7 @@ function calc_Avar(d::ChoiceData,p::Array{T,1}) where T
     dev = zeros(length(p))
     for app in eachperson(d)
         # println(keys(app._perDict))
-        f_obj(x) = avar_obj_func(x,app,p_est)
+        f_obj(x) = avar_obj_func(x,app,p)
         grad_obs[:].=0
         FiniteDiff.finite_difference_gradient!(grad_obs,f_obj,dev)
         S_n = grad_obs*grad_obs'
